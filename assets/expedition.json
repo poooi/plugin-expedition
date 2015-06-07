@@ -1,0 +1,680 @@
+[
+    {
+        "id": 1,
+        "flagship_lv": 1,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 2,
+        "flagship_lv": 2,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 3,
+        "flagship_lv": 3,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 4,
+        "flagship_lv": 3,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "flagship_lv": 3,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "flagship_lv": 4,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 7,
+        "flagship_lv": 5,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 8,
+        "flagship_lv": 6,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": []
+    },
+    {
+        "id": 9,
+        "flagship_lv": 3,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "flagship_lv": 3,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [3],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "flagship_lv": 6,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "flagship_lv": 4,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "flagship_lv": 5,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 4
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "flagship_lv": 6,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 3
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 15,
+        "flagship_lv": 9,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [7, 11, 16],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "flagship_lv": 10,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "flagship_lv": 20,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 3
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "flagship_lv": 15,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [7, 11, 16],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "flagship_lv": 20,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [10],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 20,
+        "flagship_lv": 1,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [3],
+                "count": 1
+            },
+            {
+                "shiptype": [13, 14],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 21,
+        "flagship_lv": 15,
+        "fleet_lv": 30,
+        "flagship_shiptype": 0,
+        "ship_count": 5,
+        "drum_ship_count": 3,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 4
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 22,
+        "flagship_lv": 30,
+        "fleet_lv": 45,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            },
+            {
+                "shiptype": [3],
+                "count": 5
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "flagship_lv": 50,
+        "fleet_lv": 200,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [10],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 24,
+        "flagship_lv": 50,
+        "fleet_lv": 200,
+        "flagship_shiptype": 3,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 4
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 25,
+        "flagship_lv": 25,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [5],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 26,
+        "flagship_lv": 30,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            },
+            {
+                "shiptype": [7, 11, 16],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 27,
+        "flagship_lv": 1,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 28,
+        "flagship_lv": 30,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "id": 29,
+        "flagship_lv": 50,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "id": 30,
+        "flagship_lv": 55,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 4
+            }
+        ]
+    },
+    {
+        "id": 31,
+        "flagship_lv": 60,
+        "fleet_lv": 200,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 4
+            }
+        ]
+    },
+    {
+        "id": 32,
+        "flagship_lv": 5,
+        "fleet_lv": 0,
+        "flagship_shiptype": 21,
+        "ship_count": 3,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [21],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 33,
+        "flagship_lv": 0,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 34,
+        "flagship_lv": 0,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 35,
+        "flagship_lv": 40,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 1
+            },
+            {
+                "shiptype": [5],
+                "count": 1
+            },
+            {
+                "shiptype": [7, 11, 16, 18],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 36,
+        "flagship_lv": 30,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 1
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            },
+            {
+                "shiptype": [16],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "id": 37,
+        "flagship_lv": 50,
+        "fleet_lv": 200,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 3,
+        "drum_count": 4,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 5
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 38,
+        "flagship_lv": 65,
+        "fleet_lv": 240,
+        "flagship_shiptype": 0,
+        "ship_count": 6,
+        "drum_ship_count": 4,
+        "drum_count": 8,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 5
+            }
+        ]
+    },
+    {
+        "id": 39,
+        "flagship_lv": 3,
+        "fleet_lv": 180,
+        "flagship_shiptype": 0,
+        "ship_count": 5,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [13, 14],
+                "count": 4
+            },
+            {
+                "shiptype": [20],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "id": 40,
+        "flagship_lv": 25,
+        "fleet_lv": 150,
+        "flagship_shiptype": 3,
+        "ship_count": 6,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            },
+            {
+                "shiptype": [16],
+                "count": 2
+            }
+        ]
+    }
+]

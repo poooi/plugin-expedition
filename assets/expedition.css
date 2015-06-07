@@ -1,0 +1,45 @@
+#expedition .areaTabs a {
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#expedition .expItems td {
+  vertical-align: top;
+}
+
+#expedition .expItems a {
+  text-decoration: none !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#expedition .fleetPanel.panel {
+  margin-bottom: 0px;
+}
+
+#expedition .fleetPanel td {
+  text-align: center;
+}
+
+#expedition .fleetPanel span[name="check"] {
+  color: green;
+}
+
+#expedition .fleetPanel span[name="close"] {
+  color: red;
+}
+
+#expedition .expInfo td {
+  vertical-align: top;
+}
+
+#expedition .expInfo .panel {
+  margin-bottom: 0px;
+}
+
+#expedition .expInfo ul {
+  padding-left: 15px;
+}
