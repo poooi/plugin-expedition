@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "0.9.0"
+  version: "1.0.0"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -115,12 +115,23 @@ module.exports =
     handleExpeditionSelect: (id) ->
       {$ships, $shipTypes, $missions, _decks, _ships, _slotitems} = window
       mission = $missions[id]
+      expedition = @state.expeditions[id]
       information = []
       if mission?
-        information.push <li key='time'>远征时间 {mission.api_time} 分钟</li>
-        information.push <li key='use_fuel'>消费燃料 {mission.api_use_fuel * 100} %</li>
-        information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100} %</li>
-      expedition = @state.expeditions[id]
+        hours = mission.api_time // 60;
+        minutes = mission.api_time % 60;
+        information.push <li key='time'>远征时间 {hours}:{if minutes < 10 then "0#{minutes}" else minutes}</li>
+        information.push <li key='use_fuel'>消费燃料 {mission.api_use_fuel * 100}%</li>
+        information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100}%</li>
+        if expedition?
+          if expedition.reward_fuel isnt 0
+            information.push <li key='reward_fuel'>获得燃料 {expedition.reward_fuel} ({Math.round(expedition.reward_fuel * 60 / mission.api_time)}/时)</li>
+          if expedition.reward_bullet isnt 0
+            information.push <li key='reward_bullet'>获得弹药 {expedition.reward_bullet} ({Math.round(expedition.reward_bullet * 60 / mission.api_time)}/时)</li>
+          if expedition.reward_steel isnt 0
+            information.push <li key='reward_steel'>获得钢材 {expedition.reward_steel} ({Math.round(expedition.reward_steel * 60 / mission.api_time)}/时)</li>
+          if expedition.reward_alum isnt 0
+            information.push <li key='reward_alum'>获得铝土 {expedition.reward_alum} ({Math.round(expedition.reward_alum * 60 / mission.api_time)}/时)</li>
       constraints = []
       status = [true, true, true]
       if expedition?
