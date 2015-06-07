@@ -2,7 +2,7 @@
 {_, $, $$, React, ReactBootstrap, FontAwesome, layout, JSON} = window
 {Grid, Row, Col, TabbedArea, TabPane, ListGroup, ListGroupItem, Panel} = ReactBootstrap
 
-window.addEventListener "layout.change", (e) -> null
+# window.addEventListener "layout.change", (e) -> null
 
 module.exports =
   name: "expedition"
@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "0.5.0"
+  version: "0.9.0"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -23,30 +23,125 @@ module.exports =
         expeditions: expeditions
         expedition_information: []
         expedition_constraints: []
-        fleet2_ok: true
-        fleet3_ok: false
-        fleet4_ok: false
+        fleet_status: [true, false, false]
       }
-    handleResponse: (e) -> null
-    componentDidMount: ->
-      window.addEventListener "game.response", @handleResponse
+    checkFlagshipLv: (status, flagship_lv, decks, ships) ->
+      for fleet, idx in decks[1..3]
+        flagship_id = fleet.api_ship[0]
+        if flagship_id isnt -1
+          flagship_idx = _.sortedIndex ships, {api_id: flagship_id}, 'api_id'
+          _flagship_lv = ships[flagship_idx].api_lv
+          if _flagship_lv >= flagship_lv
+            status[idx] &= true
+          else
+            status[idx] &= false
+        else
+          status[idx] &= false
+    checkFleetLv: (status, fleet_lv, decks, ships) ->
+      for fleet, idx in decks[1..3]
+        _fleet_lv = 0
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_lv = ships[ship_idx].api_lv
+          _fleet_lv += ship_lv
+        if _fleet_lv >= fleet_lv
+          status[idx] &= true
+        else
+          status[idx] &= false
+    checkFlagshipShiptype: (status, flagship_shiptype, decks, ships, Ships) ->
+      for fleet, idx in decks[1..3]
+        flagship_id = fleet.api_ship[0]
+        if flagship_id isnt -1
+          flagship_idx = _.sortedIndex ships, {api_id: flagship_id}, 'api_id'
+          flagship_shipid = ships[flagship_idx].api_ship_id
+          _flagship_shiptype = Ships[flagship_shipid].api_stype
+          if _flagship_shiptype is flagship_shiptype
+            status[idx] &= true
+          else
+            status[idx] &= false
+        else
+          status[idx] &= false
+    checkShipCount: (status, ship_count, decks) ->
+      for fleet, idx in decks[1..3]
+        _ship_count = 0
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          _ship_count += 1
+        if _ship_count >= ship_count
+          status[idx] &= true
+        else
+          status[idx] &= false
+    checkDrumShipCount: (status, drum_ship_count, decks, ships, slotitems) ->
+      for fleet, idx in decks[1..3]
+        _drum_ship_count = 0
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
+            slotitem_idx = _.sortedIndex slotitems, {api_id: slotitem_id}, 'api_id'
+            slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
+            if slotitem_slotitemid is 75
+              _drum_ship_count += 1
+              break
+        if _drum_ship_count >= drum_ship_count
+          status[idx] &= true
+        else
+          status[idx] &= false
+    checkDrumCount: (status, drum_count, decks, ships, slotitems) ->
+      for fleet, idx in decks[1..3]
+        _drum_count = 0
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
+            slotitem_idx = _.sortedIndex slotitems, {api_id: slotitem_id}, 'api_id'
+            slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
+            if slotitem_slotitemid is 75
+              _drum_count += 1
+        if _drum_count >= drum_count
+          status[idx] &= true
+        else
+          status[idx] &= false
+    checkRequiredShiptype: (status, required_shiptype, decks, ships, Ships) ->
+      for fleet, idx in decks[1..3]
+        _required_shiptype_count = 0
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_shipid = ships[ship_idx].api_ship_id
+          ship_shiptype = Ships[ship_shipid].api_stype
+          if ship_shiptype in required_shiptype.shiptype
+            _required_shiptype_count += 1
+        if _required_shiptype_count >= required_shiptype.count
+          status[idx] &= true
+        else
+          status[idx] &= false
     handleExpeditionSelect: (id) ->
-      {$shipTypes, $missions} = window
+      {$ships, $shipTypes, $missions, _decks, _ships, _slotitems} = window
+      mission = $missions[id]
+      information = []
+      if mission?
+        information.push <li key='time'>远征时间 {mission.api_time} 分钟</li>
+        information.push <li key='use_fuel'>消费燃料 {mission.api_use_fuel * 100} %</li>
+        information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100} %</li>
       expedition = @state.expeditions[id]
       constraints = []
+      status = [true, true, true]
       if expedition?
         if expedition.flagship_lv isnt 0
           constraints.push <li key='flagship_lv'>旗舰等级 Lv. {expedition.flagship_lv}</li>
+          @checkFlagshipLv status, expedition.flagship_lv, _decks, _ships
         if expedition.fleet_lv isnt 0
           constraints.push <li key='fleet_lv'>舰队等级合计 Lv. {expedition.fleet_lv}</li>
+          @checkFleetLv status, expedition.fleet_lv, _decks, _ships
         if expedition.flagship_shiptype isnt 0
           constraints.push <li key='flagship_shiptype'>旗舰舰种 {$shipTypes[expedition.flagship_shiptype].api_name}</li>
+          @checkFlagshipShiptype status, expedition.flagship_shiptype, _decks, _ships, $ships
         if expedition.ship_count isnt 0
           constraints.push <li key='ship_count'>总舰数 {expedition.ship_count} 只</li>
+          @checkShipCount status, expedition.ship_count, _decks
         if expedition.drum_ship_count isnt 0
           constraints.push <li key='drum_ship_count'>装备缶的舰数 {expedition.drum_ship_count} 只</li>
+          @checkDrumShipCount status, expedition.drum_ship_count, _decks, _ships, _slotitems
         if expedition.drum_count isnt 0
           constraints.push <li key='drum_count'>装备的缶个数 {expedition.drum_count} 个</li>
+          @checkDrumCount status, expedition.drum_count, _decks, _ships, _slotitems
         if expedition.required_shiptypes.length isnt 0
           for required_shiptype, i in expedition.required_shiptypes
             stype_name = $shipTypes[required_shiptype.shiptype[0]].api_name
@@ -54,23 +149,23 @@ module.exports =
               for stype in required_shiptype.shiptype[1..]
                 stype_name = stype_name + " 或 " + $shipTypes[stype].api_name
             constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} 只</li>
-      mission = $missions[id]
-      information = []
-      if mission?
-        information.push <li key='time'>远征时间 {mission.api_time} 分钟</li>
-        information.push <li key='use_fuel'>消费燃料 {mission.api_use_fuel * 100} %</li>
-        information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100} %</li>
+            @checkRequiredShiptype status, required_shiptype, _decks, _ships, $ships
       @setState
         expedition_id: id
         expedition_constraints: constraints
         expedition_information: information
+        fleet_status: status
+    handleResponse: (e) ->
+      @handleExpeditionSelect(@state.expedition_id)
+    componentDidMount: ->
+      window.addEventListener "game.response", @handleResponse
     render: ->
       <div>
         <link rel='stylesheet' href={join(__dirname, "assets", "expedition.css")} />
         <Grid>
           <Row>
             <Col xs=12>
-              <TabbedArea defaultActiveKey={1} animation={false} className='areaTabs'>
+              <TabbedArea defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs'>
                 {
                   {$mapareas, $missions} = window
                   if $mapareas?
@@ -104,13 +199,13 @@ module.exports =
           </Row>
           <Row>
             <Col xs=12>
-              <Panel header='舰队准备情况(尚未实现)' className='fleetPanel'>
+              <Panel header='舰队准备情况' bsStyle='danger' className='fleetPanel'>
                 <table width='100%'>
                   <tbody>
                     <tr>
-                      <td width='33%'>第2舰队 {if @state.fleet2_ok then <FontAwesome key='status_2' name='check' /> else <FontAwesome key='status_2' name='close' />}</td>
-                      <td width='33%'>第3舰队 {if @state.fleet3_ok then <FontAwesome key='status_3' name='check' /> else <FontAwesome key='status_3' name='close' />}</td>
-                      <td width='34%'>第4舰队 {if @state.fleet4_ok then <FontAwesome key='status_4' name='check' /> else <FontAwesome key='status_4' name='close' />}</td>
+                      <td width='33%'>第2艦隊 {if @state.fleet_status[0] then <FontAwesome key='status_2_yes' name='check' /> else <FontAwesome key='status_2_no' name='close' />}</td>
+                      <td width='33%'>第3艦隊 {if @state.fleet_status[1] then <FontAwesome key='status_3_yes' name='check' /> else <FontAwesome key='status_3_no' name='close' />}</td>
+                      <td width='34%'>第4艦隊 {if @state.fleet_status[2] then <FontAwesome key='status_4_yes' name='check' /> else <FontAwesome key='status_4_no' name='close' />}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -123,14 +218,14 @@ module.exports =
                 <tbody>
                   <tr>
                     <td>
-                      <Panel header='远征收支'>
+                      <Panel header='远征收支' bsStyle='info'>
                         <ul>
                           {@state.expedition_information}
                         </ul>
                       </Panel>
                     </td>
                     <td>
-                      <Panel header='必要条件'>
+                      <Panel header='必要条件' bsStyle='success'>
                         <ul>
                           {@state.expedition_constraints}
                         </ul>
