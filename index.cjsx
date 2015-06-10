@@ -29,7 +29,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         flagship_id = fleet.api_ship[0]
         if flagship_id isnt -1
-          flagship_idx = _.sortedIndex ships, {api_id: flagship_id}, 'api_id'
+          flagship_idx = flagship_id
           _flagship_lv = ships[flagship_idx].api_lv
           if _flagship_lv >= flagship_lv
             status[idx] &= true
@@ -41,7 +41,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         _fleet_lv = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_idx = ship_id
           ship_lv = ships[ship_idx].api_lv
           _fleet_lv += ship_lv
         if _fleet_lv >= fleet_lv
@@ -52,7 +52,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         flagship_id = fleet.api_ship[0]
         if flagship_id isnt -1
-          flagship_idx = _.sortedIndex ships, {api_id: flagship_id}, 'api_id'
+          flagship_idx = flagship_id
           flagship_shipid = ships[flagship_idx].api_ship_id
           _flagship_shiptype = Ships[flagship_shipid].api_stype
           if _flagship_shiptype is flagship_shiptype
@@ -74,9 +74,9 @@ module.exports =
       for fleet, idx in decks[1..3]
         _drum_ship_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_idx = ship_id
           for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
-            slotitem_idx = _.sortedIndex slotitems, {api_id: slotitem_id}, 'api_id'
+            slotitem_idx = slotitem_id
             slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
             if slotitem_slotitemid is 75
               _drum_ship_count += 1
@@ -89,9 +89,9 @@ module.exports =
       for fleet, idx in decks[1..3]
         _drum_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_idx = ship_id
           for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
-            slotitem_idx = _.sortedIndex slotitems, {api_id: slotitem_id}, 'api_id'
+            slotitem_idx = slotitem_id
             slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
             if slotitem_slotitemid is 75
               _drum_count += 1
@@ -103,7 +103,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         _required_shiptype_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = _.sortedIndex ships, {api_id: ship_id}, 'api_id'
+          ship_idx = ship_id
           ship_shipid = ships[ship_idx].api_ship_id
           ship_shiptype = Ships[ship_shipid].api_stype
           if ship_shiptype in required_shiptype.shiptype
