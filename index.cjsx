@@ -1,8 +1,8 @@
 {relative, join} = require "path-extra"
 {_, $, $$, React, ReactBootstrap, FontAwesome, layout, JSON} = window
-{Grid, Row, Col, TabbedArea, TabPane, ListGroup, ListGroupItem, Panel} = ReactBootstrap
+{Grid, Row, Col, TabbedArea, TabPane, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
 
-# window.addEventListener "layout.change", (e) -> null
+itemNames = ["", "高速修復材", "高速建造材", "開発資材", "家具箱(小)", "家具箱(中)", "家具箱(大)"]
 
 module.exports =
   name: "expedition"
@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.0.0"
+  version: "1.1.0"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -29,8 +29,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         flagship_id = fleet.api_ship[0]
         if flagship_id isnt -1
-          flagship_idx = flagship_id
-          _flagship_lv = ships[flagship_idx].api_lv
+          _flagship_lv = ships[flagship_id].api_lv
           if _flagship_lv >= flagship_lv
             status[idx] &= true
           else
@@ -41,8 +40,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         _fleet_lv = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = ship_id
-          ship_lv = ships[ship_idx].api_lv
+          ship_lv = ships[ship_id].api_lv
           _fleet_lv += ship_lv
         if _fleet_lv >= fleet_lv
           status[idx] &= true
@@ -52,8 +50,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         flagship_id = fleet.api_ship[0]
         if flagship_id isnt -1
-          flagship_idx = flagship_id
-          flagship_shipid = ships[flagship_idx].api_ship_id
+          flagship_shipid = ships[flagship_id].api_ship_id
           _flagship_shiptype = Ships[flagship_shipid].api_stype
           if _flagship_shiptype is flagship_shiptype
             status[idx] &= true
@@ -74,10 +71,8 @@ module.exports =
       for fleet, idx in decks[1..3]
         _drum_ship_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = ship_id
-          for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
-            slotitem_idx = slotitem_id
-            slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
+          for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+            slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
             if slotitem_slotitemid is 75
               _drum_ship_count += 1
               break
@@ -89,10 +84,8 @@ module.exports =
       for fleet, idx in decks[1..3]
         _drum_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = ship_id
-          for slotitem_id in ships[ship_idx].api_slot when slotitem_id isnt -1
-            slotitem_idx = slotitem_id
-            slotitem_slotitemid = slotitems[slotitem_idx].api_slotitem_id
+          for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+            slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
             if slotitem_slotitemid is 75
               _drum_count += 1
         if _drum_count >= drum_count
@@ -103,8 +96,7 @@ module.exports =
       for fleet, idx in decks[1..3]
         _required_shiptype_count = 0
         for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_idx = ship_id
-          ship_shipid = ships[ship_idx].api_ship_id
+          ship_shipid = ships[ship_id].api_ship_id
           ship_shiptype = Ships[ship_shipid].api_stype
           if ship_shiptype in required_shiptype.shiptype
             _required_shiptype_count += 1
@@ -112,7 +104,41 @@ module.exports =
           status[idx] &= true
         else
           status[idx] &= false
+    checkSupply: (status, decks, ships) ->
+      for fleet, idx in decks[1..3]
+        _supply_ok = true
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_fuel = ships[ship_id].api_fuel
+          ship_fuel_max = ships[ship_id].api_fuel_max
+          ship_bull = ships[ship_id].api_bull
+          ship_bull_max = ships[ship_id].api_bull_max
+          if ship_fuel < ship_fuel_max or ship_bull < ship_bull_max
+            _supply_ok = false
+            break
+        status[idx] &= _supply_ok
+    checkCondition: (status, decks, ships) ->
+      for fleet, idx in decks[1..3]
+        _condition_ok = true
+        for ship_id in fleet.api_ship when ship_id isnt -1
+          ship_cond = ships[ship_id].api_cond
+          if ship_cond < 30
+            _condition_ok = false
+            break
+        status[idx] &= _condition_ok
+    checkFlagshipHp: (status, decks, ships) ->
+      for fleet, idx in decks[1..3]
+        flagship_id = fleet.api_ship[0]
+        if flagship_id isnt -1
+          flagship_hp = ships[flagship_id].api_nowhp
+          flagship_maxhp = ships[flagship_id].api_maxhp
+          if flagship_hp / flagship_maxhp > 0.25
+            status[idx] &= true
+          else
+            status[idx] &= false
+        else
+          status[idx] &= false
     handleExpeditionSelect: (id) ->
+      if id is 0 then return
       {$ships, $shipTypes, $missions, _decks, _ships, _slotitems} = window
       mission = $missions[id]
       expedition = @state.expeditions[id]
@@ -125,13 +151,16 @@ module.exports =
         information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100}%</li>
         if expedition?
           if expedition.reward_fuel isnt 0
-            information.push <li key='reward_fuel'>获得燃料 {expedition.reward_fuel} ({Math.round(expedition.reward_fuel * 60 / mission.api_time)}/时)</li>
+            information.push <OverlayTrigger placement='left' overlay={<Tooltip>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_fuel'>获得燃料 {expedition.reward_fuel}</li></OverlayTrigger>
           if expedition.reward_bullet isnt 0
-            information.push <li key='reward_bullet'>获得弹药 {expedition.reward_bullet} ({Math.round(expedition.reward_bullet * 60 / mission.api_time)}/时)</li>
+            information.push <OverlayTrigger placement='left' overlay={<Tooltip>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_bullet'>获得弹药 {expedition.reward_bullet}</li></OverlayTrigger>
           if expedition.reward_steel isnt 0
-            information.push <li key='reward_steel'>获得钢材 {expedition.reward_steel} ({Math.round(expedition.reward_steel * 60 / mission.api_time)}/时)</li>
+            information.push <OverlayTrigger placement='left' overlay={<Tooltip>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_steel'>获得钢材 {expedition.reward_steel}</li></OverlayTrigger>
           if expedition.reward_alum isnt 0
-            information.push <li key='reward_alum'>获得铝土 {expedition.reward_alum} ({Math.round(expedition.reward_alum * 60 / mission.api_time)}/时)</li>
+            information.push <OverlayTrigger placement='left' overlay={<Tooltip>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_alum'>获得铝土 {expedition.reward_alum}</li></OverlayTrigger>
+          if expedition.reward_items.length isnt 0
+            for reward_item, i in expedition.reward_items
+              information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number} 个</li>
       constraints = []
       status = [true, true, true]
       if expedition?
@@ -161,13 +190,21 @@ module.exports =
                 stype_name = stype_name + " 或 " + $shipTypes[stype].api_name
             constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} 只</li>
             @checkRequiredShiptype status, required_shiptype, _decks, _ships, $ships
+        if expedition.big_success?
+          constraints.push <li key='big_success'>特殊大成功条件: {expedition.big_success}</li>
+        @checkSupply status, _decks, _ships
+        @checkCondition status, _decks, _ships
+        @checkFlagshipHp status, _decks, _ships
       @setState
         expedition_id: id
         expedition_constraints: constraints
         expedition_information: information
         fleet_status: status
     handleResponse: (e) ->
-      @handleExpeditionSelect(@state.expedition_id)
+      {path} = e.detail
+      switch path
+        when '/kcsapi/api_port/port', '/kcsapi/api_req_hensei/change', '/kcsapi/api_req_kaisou/slotset', '/kcsapi/api_req_hokyu/charge', '/kcsapi/api_get_member/ndock'
+          @handleExpeditionSelect(@state.expedition_id)
     componentDidMount: ->
       window.addEventListener "game.response", @handleResponse
     render: ->

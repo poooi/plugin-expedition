@@ -5,6 +5,11 @@
   text-overflow: ellipsis;
 }
 
+#expedition .list-group-item {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
 #expedition .expItems td {
   vertical-align: top;
 }
@@ -16,7 +21,8 @@
   text-overflow: ellipsis;
 }
 
-#expedition .fleetPanel.panel {
+#expedition .panel {
+  margin-top: 1px;
   margin-bottom: 0px;
 }
 

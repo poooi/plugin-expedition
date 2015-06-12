@@ -5,13 +5,15 @@
         "reward_bullet": 30,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 1,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 2,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 2,
@@ -19,13 +21,20 @@
         "reward_bullet": 100,
         "reward_steel": 30,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 2,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 4,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 3,
@@ -33,13 +42,15 @@
         "reward_bullet": 30,
         "reward_steel": 40,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 3,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 3,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 4,
@@ -47,6 +58,16 @@
         "reward_bullet": 60,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 3,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -62,7 +83,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 5,
@@ -70,6 +92,7 @@
         "reward_bullet": 200,
         "reward_steel": 20,
         "reward_alum": 20,
+        "reward_items": [],
         "flagship_lv": 3,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -85,7 +108,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 6,
@@ -93,13 +117,20 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 80,
+        "reward_items": [
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 4,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 4,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 7,
@@ -107,13 +138,20 @@
         "reward_bullet": 0,
         "reward_steel": 50,
         "reward_alum": 30,
+        "reward_items": [
+            {
+                "itemtype": 2,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 5,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 6,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 8,
@@ -121,13 +159,24 @@
         "reward_bullet": 100,
         "reward_steel": 50,
         "reward_alum": 50,
+        "reward_items": [
+            {
+                "itemtype": 2,
+                "max_number": 2
+            },
+            {
+                "itemtype": 3,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 6,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
         "ship_count": 6,
         "drum_ship_count": 0,
         "drum_count": 0,
-        "required_shiptypes": []
+        "required_shiptypes": [],
+        "big_success": null
     },
     {
         "id": 9,
@@ -135,6 +184,16 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 2
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 3,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -150,7 +209,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 10,
@@ -158,6 +218,16 @@
         "reward_bullet": 50,
         "reward_steel": 0,
         "reward_alum": 30,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 2,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 3,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -169,7 +239,8 @@
                 "shiptype": [3],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 11,
@@ -177,6 +248,16 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 250,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 6,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -188,7 +269,8 @@
                 "shiptype": [2],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 12,
@@ -196,6 +278,16 @@
         "reward_bullet": 250,
         "reward_steel": 200,
         "reward_alum": 50,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 5,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 4,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -207,7 +299,8 @@
                 "shiptype": [2],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 13,
@@ -215,6 +308,16 @@
         "reward_bullet": 300,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 2
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 5,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -230,7 +333,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 14,
@@ -238,6 +342,16 @@
         "reward_bullet": 240,
         "reward_steel": 200,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 3,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 6,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -253,7 +367,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 15,
@@ -261,6 +376,16 @@
         "reward_bullet": 0,
         "reward_steel": 300,
         "reward_alum": 400,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 6,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 9,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -276,7 +401,8 @@
                 "shiptype": [7, 11, 16],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 16,
@@ -284,6 +410,16 @@
         "reward_bullet": 500,
         "reward_steel": 200,
         "reward_alum": 200,
+        "reward_items": [
+            {
+                "itemtype": 2,
+                "max_number": 2
+            },
+            {
+                "itemtype": 3,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 10,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -299,7 +435,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 17,
@@ -307,6 +444,7 @@
         "reward_bullet": 70,
         "reward_steel": 50,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 20,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -322,7 +460,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 18,
@@ -330,6 +469,12 @@
         "reward_bullet": 0,
         "reward_steel": 300,
         "reward_alum": 100,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 15,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -345,7 +490,8 @@
                 "shiptype": [7, 11, 16],
                 "count": 3
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 19,
@@ -353,6 +499,16 @@
         "reward_bullet": 0,
         "reward_steel": 50,
         "reward_alum": 30,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 20,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -368,7 +524,8 @@
                 "shiptype": [10],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 20,
@@ -376,6 +533,16 @@
         "reward_bullet": 0,
         "reward_steel": 150,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 1,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -391,7 +558,8 @@
                 "shiptype": [13, 14],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 21,
@@ -399,6 +567,12 @@
         "reward_bullet": 270,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 15,
         "fleet_lv": 30,
         "flagship_shiptype": 0,
@@ -414,7 +588,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": "6只编制, 4只战意高扬, 额外装备1个缶"
     },
     {
         "id": 22,
@@ -422,6 +597,7 @@
         "reward_bullet": 10,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 30,
         "fleet_lv": 45,
         "flagship_shiptype": 0,
@@ -441,7 +617,8 @@
                 "shiptype": [5],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 23,
@@ -449,6 +626,7 @@
         "reward_bullet": 20,
         "reward_steel": 0,
         "reward_alum": 100,
+        "reward_items": [],
         "flagship_lv": 50,
         "fleet_lv": 200,
         "flagship_shiptype": 0,
@@ -464,7 +642,8 @@
                 "shiptype": [10],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 24,
@@ -472,6 +651,16 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 150,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 3,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 50,
         "fleet_lv": 200,
         "flagship_shiptype": 3,
@@ -483,7 +672,8 @@
                 "shiptype": [2],
                 "count": 4
             }
-        ]
+        ],
+        "big_success": "无战意高扬舰船亦可能大成功"
     },
     {
         "id": 25,
@@ -491,6 +681,7 @@
         "reward_bullet": 0,
         "reward_steel": 500,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 25,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -506,7 +697,8 @@
                 "shiptype": [5],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 26,
@@ -514,6 +706,12 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 900,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 3
+            }
+        ],
         "flagship_lv": 30,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -533,7 +731,8 @@
                 "shiptype": [7, 11, 16],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 27,
@@ -541,6 +740,16 @@
         "reward_bullet": 0,
         "reward_steel": 800,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 1,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -552,7 +761,8 @@
                 "shiptype": [13, 14],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 28,
@@ -560,6 +770,16 @@
         "reward_bullet": 0,
         "reward_steel": 900,
         "reward_alum": 350,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 2
+            },
+            {
+                "itemtype": 5,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 30,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -571,7 +791,8 @@
                 "shiptype": [13, 14],
                 "count": 3
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 29,
@@ -579,6 +800,16 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 100,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 50,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -590,7 +821,8 @@
                 "shiptype": [13, 14],
                 "count": 3
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 30,
@@ -598,6 +830,12 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 100,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 3
+            }
+        ],
         "flagship_lv": 55,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -609,7 +847,8 @@
                 "shiptype": [13, 14],
                 "count": 4
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 31,
@@ -617,6 +856,12 @@
         "reward_bullet": 30,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 60,
         "fleet_lv": 200,
         "flagship_shiptype": 0,
@@ -628,7 +873,8 @@
                 "shiptype": [13, 14],
                 "count": 4
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 32,
@@ -636,6 +882,16 @@
         "reward_bullet": 50,
         "reward_steel": 50,
         "reward_alum": 50,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 3
+            },
+            {
+                "itemtype": 6,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 5,
         "fleet_lv": 0,
         "flagship_shiptype": 21,
@@ -647,7 +903,8 @@
                 "shiptype": [2],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": "无战意高扬舰船亦可能大成功"
     },
     {
         "id": 33,
@@ -655,6 +912,7 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 0,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -666,7 +924,8 @@
                 "shiptype": [2],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 34,
@@ -674,6 +933,7 @@
         "reward_bullet": 0,
         "reward_steel": 0,
         "reward_alum": 0,
+        "reward_items": [],
         "flagship_lv": 0,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -685,7 +945,8 @@
                 "shiptype": [2],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 35,
@@ -693,6 +954,16 @@
         "reward_bullet": 0,
         "reward_steel": 240,
         "reward_alum": 280,
+        "reward_items": [
+            {
+                "itemtype": 3,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 40,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -712,7 +983,8 @@
                 "shiptype": [7, 11, 16, 18],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 36,
@@ -720,6 +992,16 @@
         "reward_bullet": 0,
         "reward_steel": 200,
         "reward_alum": 200,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 5,
+                "max_number": 2
+            }
+        ],
         "flagship_lv": 30,
         "fleet_lv": 0,
         "flagship_shiptype": 0,
@@ -739,7 +1021,8 @@
                 "shiptype": [16],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 37,
@@ -747,6 +1030,12 @@
         "reward_bullet": 380,
         "reward_steel": 270,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 50,
         "fleet_lv": 200,
         "flagship_shiptype": 0,
@@ -762,7 +1051,8 @@
                 "shiptype": [3],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": "6只编制, 4只战意高扬, 额外装备1个缶"
     },
     {
         "id": 38,
@@ -770,6 +1060,12 @@
         "reward_bullet": 0,
         "reward_steel": 200,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 65,
         "fleet_lv": 240,
         "flagship_shiptype": 0,
@@ -781,7 +1077,8 @@
                 "shiptype": [2],
                 "count": 5
             }
-        ]
+        ],
+        "big_success": "6只编制, 4只战意高扬, 额外装备2个缶"
     },
     {
         "id": 39,
@@ -789,6 +1086,16 @@
         "reward_bullet": 0,
         "reward_steel": 300,
         "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 2
+            },
+            {
+                "itemtype": 5,
+                "max_number": 1
+            }
+        ],
         "flagship_lv": 3,
         "fleet_lv": 180,
         "flagship_shiptype": 0,
@@ -804,7 +1111,8 @@
                 "shiptype": [20],
                 "count": 1
             }
-        ]
+        ],
+        "big_success": null
     },
     {
         "id": 40,
@@ -812,6 +1120,16 @@
         "reward_bullet": 300,
         "reward_steel": 0,
         "reward_alum": 100,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 3
+            }
+        ],
         "flagship_lv": 25,
         "fleet_lv": 150,
         "flagship_shiptype": 3,
@@ -827,6 +1145,7 @@
                 "shiptype": [16],
                 "count": 2
             }
-        ]
+        ],
+        "big_success": "无战意高扬舰船亦可能大成功"
     }
 ]
