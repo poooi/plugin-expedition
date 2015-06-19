@@ -15,7 +15,7 @@ module.exports =
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
-      json = fs.readJsonSync join(__dirname, "assets", "expedition.json"), "utf8"
+      json = fs.readJsonSync join(__dirname, "assets", "expedition.json")
       expeditions = []
       expeditions[expedition.id] = expedition for expedition in json
       {
