@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.1.0"
+  version: "1.2.0"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -23,125 +23,152 @@ module.exports =
         expeditions: expeditions
         expedition_information: []
         expedition_constraints: []
-        fleet_status: [true, false, false]
+        fleet_status: [false, false, false]
       }
-    checkFlagshipLv: (status, flagship_lv, decks, ships) ->
-      for fleet, idx in decks[1..3]
-        flagship_id = fleet.api_ship[0]
-        if flagship_id isnt -1
-          _flagship_lv = ships[flagship_id].api_lv
-          if _flagship_lv >= flagship_lv
-            status[idx] &= true
-          else
-            status[idx] &= false
+    checkFlagshipLv: (deck_id, flagship_lv, decks, ships) ->
+      fleet = decks[deck_id]
+      flagship_id = fleet.api_ship[0]
+      if flagship_id isnt -1
+        _flagship_lv = ships[flagship_id].api_lv
+        if _flagship_lv >= flagship_lv
+          return true
         else
-          status[idx] &= false
-    checkFleetLv: (status, fleet_lv, decks, ships) ->
-      for fleet, idx in decks[1..3]
-        _fleet_lv = 0
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_lv = ships[ship_id].api_lv
-          _fleet_lv += ship_lv
-        if _fleet_lv >= fleet_lv
-          status[idx] &= true
+          return false
+      else
+        return false
+    checkFleetLv: (deck_id, fleet_lv, decks, ships) ->
+      fleet = decks[deck_id]
+      _fleet_lv = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        ship_lv = ships[ship_id].api_lv
+        _fleet_lv += ship_lv
+      if _fleet_lv >= fleet_lv
+        return true
+      else
+        return false
+    checkFlagshipShiptype: (deck_id, flagship_shiptype, decks, ships, Ships) ->
+      fleet = decks[deck_id]
+      flagship_id = fleet.api_ship[0]
+      if flagship_id isnt -1
+        flagship_shipid = ships[flagship_id].api_ship_id
+        _flagship_shiptype = Ships[flagship_shipid].api_stype
+        if _flagship_shiptype is flagship_shiptype
+          return true
         else
-          status[idx] &= false
-    checkFlagshipShiptype: (status, flagship_shiptype, decks, ships, Ships) ->
-      for fleet, idx in decks[1..3]
-        flagship_id = fleet.api_ship[0]
-        if flagship_id isnt -1
-          flagship_shipid = ships[flagship_id].api_ship_id
-          _flagship_shiptype = Ships[flagship_shipid].api_stype
-          if _flagship_shiptype is flagship_shiptype
-            status[idx] &= true
-          else
-            status[idx] &= false
-        else
-          status[idx] &= false
-    checkShipCount: (status, ship_count, decks) ->
-      for fleet, idx in decks[1..3]
-        _ship_count = 0
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          _ship_count += 1
-        if _ship_count >= ship_count
-          status[idx] &= true
-        else
-          status[idx] &= false
-    checkDrumShipCount: (status, drum_ship_count, decks, ships, slotitems) ->
-      for fleet, idx in decks[1..3]
-        _drum_ship_count = 0
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
-            slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
-            if slotitem_slotitemid is 75
-              _drum_ship_count += 1
-              break
-        if _drum_ship_count >= drum_ship_count
-          status[idx] &= true
-        else
-          status[idx] &= false
-    checkDrumCount: (status, drum_count, decks, ships, slotitems) ->
-      for fleet, idx in decks[1..3]
-        _drum_count = 0
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
-            slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
-            if slotitem_slotitemid is 75
-              _drum_count += 1
-        if _drum_count >= drum_count
-          status[idx] &= true
-        else
-          status[idx] &= false
-    checkRequiredShiptype: (status, required_shiptype, decks, ships, Ships) ->
-      for fleet, idx in decks[1..3]
-        _required_shiptype_count = 0
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_shipid = ships[ship_id].api_ship_id
-          ship_shiptype = Ships[ship_shipid].api_stype
-          if ship_shiptype in required_shiptype.shiptype
-            _required_shiptype_count += 1
-        if _required_shiptype_count >= required_shiptype.count
-          status[idx] &= true
-        else
-          status[idx] &= false
-    checkSupply: (status, decks, ships) ->
-      for fleet, idx in decks[1..3]
-        _supply_ok = true
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_fuel = ships[ship_id].api_fuel
-          ship_fuel_max = ships[ship_id].api_fuel_max
-          ship_bull = ships[ship_id].api_bull
-          ship_bull_max = ships[ship_id].api_bull_max
-          if ship_fuel < ship_fuel_max or ship_bull < ship_bull_max
-            _supply_ok = false
+          return false
+      else
+        return false
+    checkShipCount: (deck_id, ship_count, decks) ->
+      fleet = decks[deck_id]
+      _ship_count = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        _ship_count += 1
+      if _ship_count >= ship_count
+        return true
+      else
+        return false
+    checkDrumShipCount: (deck_id, drum_ship_count, decks, ships, slotitems) ->
+      fleet = decks[deck_id]
+      _drum_ship_count = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+          slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
+          if slotitem_slotitemid is 75
+            _drum_ship_count += 1
             break
-        status[idx] &= _supply_ok
-    checkCondition: (status, decks, ships) ->
-      for fleet, idx in decks[1..3]
-        _condition_ok = true
-        for ship_id in fleet.api_ship when ship_id isnt -1
-          ship_cond = ships[ship_id].api_cond
-          if ship_cond < 30
-            _condition_ok = false
-            break
-        status[idx] &= _condition_ok
-    checkFlagshipHp: (status, decks, ships) ->
-      for fleet, idx in decks[1..3]
-        flagship_id = fleet.api_ship[0]
-        if flagship_id isnt -1
-          flagship_hp = ships[flagship_id].api_nowhp
-          flagship_maxhp = ships[flagship_id].api_maxhp
-          if flagship_hp / flagship_maxhp > 0.25
-            status[idx] &= true
-          else
-            status[idx] &= false
+      if _drum_ship_count >= drum_ship_count
+        return true
+      else
+        return false
+    checkDrumCount: (deck_id, drum_count, decks, ships, slotitems) ->
+      fleet = decks[deck_id]
+      _drum_count = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+          slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
+          if slotitem_slotitemid is 75
+            _drum_count += 1
+      if _drum_count >= drum_count
+        return true
+      else
+        return false
+    checkRequiredShiptype: (deck_id, required_shiptype, decks, ships, Ships) ->
+      fleet = decks[deck_id]
+      _required_shiptype_count = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        ship_shipid = ships[ship_id].api_ship_id
+        ship_shiptype = Ships[ship_shipid].api_stype
+        if ship_shiptype in required_shiptype.shiptype
+          _required_shiptype_count += 1
+      if _required_shiptype_count >= required_shiptype.count
+        return true
+      else
+        return false
+    checkSupply: (deck_id, decks, ships) ->
+      fleet = decks[deck_id]
+      _supply_ok = true
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        ship_fuel = ships[ship_id].api_fuel
+        ship_fuel_max = ships[ship_id].api_fuel_max
+        ship_bull = ships[ship_id].api_bull
+        ship_bull_max = ships[ship_id].api_bull_max
+        if ship_fuel < ship_fuel_max or ship_bull < ship_bull_max
+          _supply_ok = false
+          break
+      return _supply_ok
+    checkCondition: (deck_id, decks, ships) ->
+      fleet = decks[deck_id]
+      _condition_ok = true
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        ship_cond = ships[ship_id].api_cond
+        if ship_cond < 30
+          _condition_ok = false
+          break
+      return _condition_ok
+    checkFlagshipHp: (deck_id, decks, ships) ->
+      fleet = decks[deck_id]
+      flagship_id = fleet.api_ship[0]
+      if flagship_id isnt -1
+        flagship_hp = ships[flagship_id].api_nowhp
+        flagship_maxhp = ships[flagship_id].api_maxhp
+        if flagship_hp / flagship_maxhp > 0.25
+          return true
         else
-          status[idx] &= false
-    handleExpeditionSelect: (id) ->
-      if id is 0 then return
-      {$ships, $shipTypes, $missions, _decks, _ships, _slotitems} = window
-      mission = $missions[id]
-      expedition = @state.expeditions[id]
+          return false
+      else
+        return false
+    examineConstraints: (exp_id, deck_id) ->
+      {$ships, _decks, _ships, _slotitems} = window
+      return false if exp_id is 0
+      return false unless $ships? and _decks? and _ships? and _slotitems?
+      expedition = @state.expeditions[exp_id]
+      status = true
+      if expedition?
+        if expedition.flagship_lv isnt 0
+          status &= @checkFlagshipLv deck_id, expedition.flagship_lv, _decks, _ships
+        if expedition.fleet_lv isnt 0
+          status &= @checkFleetLv deck_id, expedition.fleet_lv, _decks, _ships
+        if expedition.flagship_shiptype isnt 0
+          status &= @checkFlagshipShiptype deck_id, expedition.flagship_shiptype, _decks, _ships, $ships
+        if expedition.ship_count isnt 0
+          status &= @checkShipCount deck_id, expedition.ship_count, _decks
+        if expedition.drum_ship_count isnt 0
+          status &= @checkDrumShipCount deck_id, expedition.drum_ship_count, _decks, _ships, _slotitems
+        if expedition.drum_count isnt 0
+          status &= @checkDrumCount deck_id, expedition.drum_count, _decks, _ships, _slotitems
+        if expedition.required_shiptypes.length isnt 0
+          for required_shiptype in expedition.required_shiptypes
+            status &= @checkRequiredShiptype deck_id, required_shiptype, _decks, _ships, $ships
+      status &= @checkSupply deck_id, _decks, _ships
+      status &= @checkCondition deck_id, _decks, _ships
+      status &= @checkFlagshipHp deck_id, _decks, _ships
+      return status
+    describeConstraints: (exp_id) ->
+      {$shipTypes, $missions} = window
+      return {information: [], constraints: []} if exp_id is 0
+      return {information: [], constraints: []} unless $shipTypes? and $missions?
+      mission = $missions[exp_id]
+      expedition = @state.expeditions[exp_id]
       information = []
       if mission?
         hours = mission.api_time // 60;
@@ -162,26 +189,19 @@ module.exports =
             for reward_item, i in expedition.reward_items
               information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number} 个</li>
       constraints = []
-      status = [true, true, true]
       if expedition?
         if expedition.flagship_lv isnt 0
           constraints.push <li key='flagship_lv'>旗舰等级 Lv. {expedition.flagship_lv}</li>
-          @checkFlagshipLv status, expedition.flagship_lv, _decks, _ships
         if expedition.fleet_lv isnt 0
           constraints.push <li key='fleet_lv'>舰队等级合计 Lv. {expedition.fleet_lv}</li>
-          @checkFleetLv status, expedition.fleet_lv, _decks, _ships
         if expedition.flagship_shiptype isnt 0
           constraints.push <li key='flagship_shiptype'>旗舰舰种 {$shipTypes[expedition.flagship_shiptype].api_name}</li>
-          @checkFlagshipShiptype status, expedition.flagship_shiptype, _decks, _ships, $ships
         if expedition.ship_count isnt 0
           constraints.push <li key='ship_count'>总舰数 {expedition.ship_count} 只</li>
-          @checkShipCount status, expedition.ship_count, _decks
         if expedition.drum_ship_count isnt 0
           constraints.push <li key='drum_ship_count'>装备缶的舰数 {expedition.drum_ship_count} 只</li>
-          @checkDrumShipCount status, expedition.drum_ship_count, _decks, _ships, _slotitems
         if expedition.drum_count isnt 0
           constraints.push <li key='drum_count'>装备的缶个数 {expedition.drum_count} 个</li>
-          @checkDrumCount status, expedition.drum_count, _decks, _ships, _slotitems
         if expedition.required_shiptypes.length isnt 0
           for required_shiptype, i in expedition.required_shiptypes
             stype_name = $shipTypes[required_shiptype.shiptype[0]].api_name
@@ -189,22 +209,30 @@ module.exports =
               for stype in required_shiptype.shiptype[1..]
                 stype_name = stype_name + " 或 " + $shipTypes[stype].api_name
             constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} 只</li>
-            @checkRequiredShiptype status, required_shiptype, _decks, _ships, $ships
         if expedition.big_success?
           constraints.push <li key='big_success'>特殊大成功条件: {expedition.big_success}</li>
-        @checkSupply status, _decks, _ships
-        @checkCondition status, _decks, _ships
-        @checkFlagshipHp status, _decks, _ships
+      return {information, constraints}
+    handleExpeditionSelect: (exp_id) ->
+      status = [false, false, false]
+      for deck_id in [1..3]
+        status[deck_id - 1] = @examineConstraints exp_id, deck_id
+      {information, constraints} = @describeConstraints exp_id
       @setState
-        expedition_id: id
-        expedition_constraints: constraints
+        expedition_id: exp_id
         expedition_information: information
+        expedition_constraints: constraints
         fleet_status: status
     handleResponse: (e) ->
-      {path} = e.detail
+      {method, path, body, postBody} = e.detail
       switch path
         when '/kcsapi/api_port/port', '/kcsapi/api_req_hensei/change', '/kcsapi/api_req_kaisou/slotset', '/kcsapi/api_req_hokyu/charge', '/kcsapi/api_get_member/ndock'
           @handleExpeditionSelect(@state.expedition_id)
+        when '/kcsapi/api_req_mission/start'
+          {$missions} = window
+          deck_id = postBody.api_deck_id - 1
+          exp_id = postBody.api_mission_id
+          status = @examineConstraints exp_id, deck_id
+          toggleModal '远征注意！', "第 #{deck_id + 1} 舰队远征 #{$missions[exp_id].api_name} 不满足成功条件，请及时召回！" unless status
     componentDidMount: ->
       window.addEventListener "game.response", @handleResponse
     render: ->
