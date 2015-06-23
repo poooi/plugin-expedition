@@ -1,5 +1,5 @@
-{relative, join} = require "path-extra"
-{_, $, $$, React, ReactBootstrap, FontAwesome, layout, JSON} = window
+{join} = require "path-extra"
+{_, $, $$, React, ReactBootstrap, FontAwesome, layout} = window
 {Grid, Row, Col, TabbedArea, TabPane, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
 
 itemNames = ["", "高速修復材", "高速建造材", "開発資材", "家具箱(小)", "家具箱(中)", "家具箱(大)"]
@@ -8,10 +8,10 @@ module.exports =
   name: "expedition"
   priority: 2
   displayName: [<FontAwesome key={0} name='flag' />, " 远征信息"]
-  description: "远征信息查询"
+  description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.2.0"
+  version: "1.2.1"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -27,6 +27,7 @@ module.exports =
       }
     checkFlagshipLv: (deck_id, flagship_lv, decks, ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       flagship_id = fleet.api_ship[0]
       if flagship_id isnt -1
         _flagship_lv = ships[flagship_id].api_lv
@@ -38,6 +39,7 @@ module.exports =
         return false
     checkFleetLv: (deck_id, fleet_lv, decks, ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _fleet_lv = 0
       for ship_id in fleet.api_ship when ship_id isnt -1
         ship_lv = ships[ship_id].api_lv
@@ -48,6 +50,7 @@ module.exports =
         return false
     checkFlagshipShiptype: (deck_id, flagship_shiptype, decks, ships, Ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       flagship_id = fleet.api_ship[0]
       if flagship_id isnt -1
         flagship_shipid = ships[flagship_id].api_ship_id
@@ -60,6 +63,7 @@ module.exports =
         return false
     checkShipCount: (deck_id, ship_count, decks) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _ship_count = 0
       for ship_id in fleet.api_ship when ship_id isnt -1
         _ship_count += 1
@@ -69,6 +73,7 @@ module.exports =
         return false
     checkDrumShipCount: (deck_id, drum_ship_count, decks, ships, slotitems) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _drum_ship_count = 0
       for ship_id in fleet.api_ship when ship_id isnt -1
         for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
@@ -82,6 +87,7 @@ module.exports =
         return false
     checkDrumCount: (deck_id, drum_count, decks, ships, slotitems) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _drum_count = 0
       for ship_id in fleet.api_ship when ship_id isnt -1
         for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
@@ -94,6 +100,7 @@ module.exports =
         return false
     checkRequiredShiptype: (deck_id, required_shiptype, decks, ships, Ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _required_shiptype_count = 0
       for ship_id in fleet.api_ship when ship_id isnt -1
         ship_shipid = ships[ship_id].api_ship_id
@@ -106,6 +113,7 @@ module.exports =
         return false
     checkSupply: (deck_id, decks, ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _supply_ok = true
       for ship_id in fleet.api_ship when ship_id isnt -1
         ship_fuel = ships[ship_id].api_fuel
@@ -118,6 +126,7 @@ module.exports =
       return _supply_ok
     checkCondition: (deck_id, decks, ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       _condition_ok = true
       for ship_id in fleet.api_ship when ship_id isnt -1
         ship_cond = ships[ship_id].api_cond
@@ -127,6 +136,7 @@ module.exports =
       return _condition_ok
     checkFlagshipHp: (deck_id, decks, ships) ->
       fleet = decks[deck_id]
+      return false unless fleet?
       flagship_id = fleet.api_ship[0]
       if flagship_id isnt -1
         flagship_hp = ships[flagship_id].api_nowhp
@@ -212,21 +222,27 @@ module.exports =
         if expedition.big_success?
           constraints.push <li key='big_success'>特殊大成功条件: {expedition.big_success}</li>
       return {information, constraints}
-    handleExpeditionSelect: (exp_id) ->
+    handleStatChange: (exp_id) ->
       status = [false, false, false]
       for deck_id in [1..3]
         status[deck_id - 1] = @examineConstraints exp_id, deck_id
+      @setState
+        fleet_status: status
+    handleInfoChange: (exp_id) ->
       {information, constraints} = @describeConstraints exp_id
       @setState
-        expedition_id: exp_id
         expedition_information: information
         expedition_constraints: constraints
-        fleet_status: status
+    handleExpeditionSelect: (exp_id) ->
+      @handleStatChange(exp_id)
+      @handleInfoChange(exp_id)
+      @setState
+        expedition_id: exp_id
     handleResponse: (e) ->
       {method, path, body, postBody} = e.detail
       switch path
         when '/kcsapi/api_port/port', '/kcsapi/api_req_hensei/change', '/kcsapi/api_req_kaisou/slotset', '/kcsapi/api_req_hokyu/charge', '/kcsapi/api_get_member/ndock'
-          @handleExpeditionSelect(@state.expedition_id)
+          @handleStatChange(@state.expedition_id)
         when '/kcsapi/api_req_mission/start'
           {$missions} = window
           deck_id = postBody.api_deck_id - 1
