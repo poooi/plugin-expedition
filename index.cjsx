@@ -188,13 +188,13 @@ module.exports =
         information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100}%</li>
         if expedition?
           if expedition.reward_fuel isnt 0
-            information.push <OverlayTrigger placement='right' overlay={<Tooltip>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_fuel'>获得燃料 {expedition.reward_fuel}</li></OverlayTrigger>
+            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_fuel'>获得燃料 {expedition.reward_fuel}</li></OverlayTrigger>
           if expedition.reward_bullet isnt 0
-            information.push <OverlayTrigger placement='right' overlay={<Tooltip>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_bullet'>获得弹药 {expedition.reward_bullet}</li></OverlayTrigger>
+            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_bullet'>获得弹药 {expedition.reward_bullet}</li></OverlayTrigger>
           if expedition.reward_steel isnt 0
-            information.push <OverlayTrigger placement='right' overlay={<Tooltip>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_steel'>获得钢材 {expedition.reward_steel}</li></OverlayTrigger>
+            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_steel'>获得钢材 {expedition.reward_steel}</li></OverlayTrigger>
           if expedition.reward_alum isnt 0
-            information.push <OverlayTrigger placement='right' overlay={<Tooltip>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_alum'>获得铝土 {expedition.reward_alum}</li></OverlayTrigger>
+            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_alum'>获得铝土 {expedition.reward_alum}</li></OverlayTrigger>
           if expedition.reward_items.length isnt 0
             for reward_item, i in expedition.reward_items
               information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number} 个</li>
@@ -272,13 +272,19 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[0...4]
-                                    <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                    if mission.api_id is @state.expedition_id
+                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id} active>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                    else
+                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
                                 }
                               </td>
                               <td>
                                 {
-                                  for mission in map_missions[4..]
-                                    <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                  for mission in map_missions[4...8]
+                                    if mission.api_id is @state.expedition_id
+                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id} active>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                    else
+                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
                                 }
                               </td>
                             </tr>
@@ -306,26 +312,18 @@ module.exports =
           </Row>
           <Row>
             <Col xs=12>
-              <table width='100%' className='expInfo'>
-                <tbody>
-                  <tr>
-                    <td>
-                      <Panel header='远征收支' bsStyle='info'>
-                        <ul>
-                          {@state.expedition_information}
-                        </ul>
-                      </Panel>
-                    </td>
-                    <td>
-                      <Panel header='必要条件' bsStyle='success'>
-                        <ul>
-                          {@state.expedition_constraints}
-                        </ul>
-                      </Panel>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className='expInfo'>
+                <Panel header='远征收支' bsStyle='info' className='expAward'>
+                  <ul>
+                    {@state.expedition_information}
+                  </ul>
+                </Panel>
+                <Panel header='必要条件' bsStyle='success' className='expCond'>
+                  <ul>
+                    {@state.expedition_constraints}
+                  </ul>
+                </Panel>
+              </div>
             </Col>
           </Row>
         </Grid>
