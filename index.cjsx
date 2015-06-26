@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.2.1"
+  version: "1.2.2"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
