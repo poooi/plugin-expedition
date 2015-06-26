@@ -11,7 +11,7 @@ module.exports =
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.2.2"
+  version: "1.2.1"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -188,13 +188,13 @@ module.exports =
         information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100}%</li>
         if expedition?
           if expedition.reward_fuel isnt 0
-            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_fuel'>获得燃料 {expedition.reward_fuel}</li></OverlayTrigger>
+            information.push <li key='reward_fuel'><OverlayTrigger placement='right' overlay={<Tooltip>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><div display='inline-block'>获得燃料 {expedition.reward_fuel}</div></OverlayTrigger></li>
           if expedition.reward_bullet isnt 0
-            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_bullet'>获得弹药 {expedition.reward_bullet}</li></OverlayTrigger>
+            information.push <li key='reward_bullet'><OverlayTrigger placement='right' overlay={<Tooltip>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><div display='inline-block'>获得弹药 {expedition.reward_bullet}</div></OverlayTrigger></li>
           if expedition.reward_steel isnt 0
-            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_steel'>获得钢材 {expedition.reward_steel}</li></OverlayTrigger>
+            information.push <li key='reward_steel'><OverlayTrigger placement='right' overlay={<Tooltip>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><div display='inline-block'>获得钢材 {expedition.reward_steel}</div></OverlayTrigger></li>
           if expedition.reward_alum isnt 0
-            information.push <OverlayTrigger placement='top' overlay={<Tooltip>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><li key='reward_alum'>获得铝土 {expedition.reward_alum}</li></OverlayTrigger>
+            information.push <li key='reward_alum'><OverlayTrigger placement='right' overlay={<Tooltip>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><div display='inline-block'>获得铝土 {expedition.reward_alum}</div></OverlayTrigger></li>
           if expedition.reward_items.length isnt 0
             for reward_item, i in expedition.reward_items
               information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number} 个</li>
