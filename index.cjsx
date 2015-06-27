@@ -4,6 +4,9 @@
 
 itemNames = ["", "高速修復材", "高速建造材", "開発資材", "家具箱(小)", "家具箱(中)", "家具箱(大)"]
 
+getMaterialImage = (idx) ->
+  return "#{ROOT}/assets/img/material/0#{idx}.png"
+
 module.exports =
   name: "expedition"
   priority: 2
@@ -11,7 +14,7 @@ module.exports =
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.2.2"
+  version: "1.3.0"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -24,6 +27,8 @@ module.exports =
         expedition_information: []
         expedition_constraints: []
         fleet_status: [false, false, false]
+        fleet_reward: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        fleet_reward_hour: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       }
     checkFlagshipLv: (deck_id, flagship_lv, decks, ships) ->
       fleet = decks[deck_id]
@@ -173,6 +178,49 @@ module.exports =
       status &= @checkCondition deck_id, _decks, _ships
       status &= @checkFlagshipHp deck_id, _decks, _ships
       return status
+    getMaxSupply: (deck_id, decks, ships) ->
+      _max_supply = [0, 0]
+      fleet = decks[deck_id]
+      return _max_supply unless fleet?
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        ship_fuel_max = ships[ship_id].api_fuel_max
+        ship_bull_max = ships[ship_id].api_bull_max
+        _max_supply[0] += ship_fuel_max
+        _max_supply[1] += ship_bull_max
+      return _max_supply
+    getDaihatsuBonus: (deck_id, decks, ships, slotitems) ->
+      _daihatsu_count = 0
+      fleet = decks[deck_id]
+      return _daihatsu_count unless fleet?
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+          slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
+          if slotitem_slotitemid is 68
+            _daihatsu_count += 1
+      if _daihatsu_count > 4
+        _daihatsu_count = 4
+      return 1 + _daihatsu_count * 0.05
+    calculateReward: (exp_id, deck_id, deck_status) ->
+      reward = [[0, 0, 0, 0], [0, 0, 0, 0]]
+      {$missions, _decks, _ships, _slotitems} = window
+      return reward if exp_id is 0
+      return reward unless $missions? and _decks? and _ships? and _slotitems?
+      mission = $missions[exp_id]
+      expedition = @state.expeditions[exp_id]
+      return reward unless mission? and expedition?
+      max_supply = @getMaxSupply deck_id, _decks, _ships
+      coeff = @getDaihatsuBonus deck_id, _decks, _ships, _slotitems
+      coeff = 0 unless deck_status
+      actual_reward = [0, 0, 0, 0]
+      actual_reward[0] = expedition.reward_fuel * coeff - mission.api_use_fuel * max_supply[0]
+      actual_reward[1] = expedition.reward_bullet * coeff - mission.api_use_bull * max_supply[1]
+      actual_reward[2] = expedition.reward_steel * coeff
+      actual_reward[3] = expedition.reward_alum * coeff
+      inv_time = 60 / mission.api_time;
+      for i in [0...4]
+        reward[0][i] = Math.floor actual_reward[i]
+        reward[1][i] = Math.floor reward[0][i] * inv_time
+      return reward
     describeConstraints: (exp_id) ->
       {$shipTypes, $missions} = window
       return {information: [], constraints: []} if exp_id is 0
@@ -224,10 +272,18 @@ module.exports =
       return {information, constraints}
     handleStatChange: (exp_id) ->
       status = [false, false, false]
+      reward = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      reward_hour = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       for deck_id in [1..3]
-        status[deck_id - 1] = @examineConstraints exp_id, deck_id
+        ret_status = @examineConstraints exp_id, deck_id
+        status[deck_id - 1] = ret_status
+        ret_reward = @calculateReward exp_id, deck_id, ret_status
+        reward[deck_id - 1] = ret_reward[0]
+        reward_hour[deck_id - 1] = ret_reward[1]
       @setState
         fleet_status: status
+        fleet_reward: reward
+        fleet_reward_hour: reward_hour
     handleInfoChange: (exp_id) ->
       {information, constraints} = @describeConstraints exp_id
       @setState
@@ -301,9 +357,34 @@ module.exports =
                 <table width='100%'>
                   <tbody>
                     <tr>
-                      <td width='33%'>第2艦隊 {if @state.fleet_status[0] then <FontAwesome key='status_2_yes' name='check' /> else <FontAwesome key='status_2_no' name='close' />}</td>
-                      <td width='33%'>第3艦隊 {if @state.fleet_status[1] then <FontAwesome key='status_3_yes' name='check' /> else <FontAwesome key='status_3_no' name='close' />}</td>
-                      <td width='34%'>第4艦隊 {if @state.fleet_status[2] then <FontAwesome key='status_4_yes' name='check' /> else <FontAwesome key='status_4_no' name='close' />}</td>
+                      {
+                        for i in [0...3]
+                          <td key={i} width='33.3%'>
+                            <OverlayTrigger placement='top' overlay={
+                                <Tooltip>
+                                  <div>收益理论值 (时均收益值)</div>
+                                  <table width='100%' className='materialTable'>
+                                    <tbody>
+                                      <tr>
+                                        <td width='10%'><img src={getMaterialImage 1} className="material-icon" /></td>
+                                        <td width='40%'>{@state.fleet_reward[i][0]} ({@state.fleet_reward_hour[i][0]})</td>
+                                        <td width='10%'><img src={getMaterialImage 3} className="material-icon" /></td>
+                                        <td width='40%'>{@state.fleet_reward[i][2]} ({@state.fleet_reward_hour[i][2]})</td>
+                                      </tr>
+                                      <tr>
+                                        <td><img src={getMaterialImage 2} className="material-icon" /></td>
+                                        <td>{@state.fleet_reward[i][1]} ({@state.fleet_reward_hour[i][1]})</td>
+                                        <td><img src={getMaterialImage 4} className="material-icon" /></td>
+                                        <td>{@state.fleet_reward[i][3]} ({@state.fleet_reward_hour[i][3]})</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </Tooltip>
+                              }>
+                              <div className='tooltipTrigger'>第{i + 2}艦隊 {if @state.fleet_status[i] then <FontAwesome key={i * 2} name='check' /> else <FontAwesome key={i * 2 + 1} name='close' />}</div>
+                            </OverlayTrigger>
+                          </td>
+                      }
                     </tr>
                   </tbody>
                 </table>

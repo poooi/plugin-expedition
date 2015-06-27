@@ -2,6 +2,18 @@
   display: inline-block;
 }
 
+#expedition .material-icon {
+  margin-right: 5px;
+  width: 18px;
+  height: 18px;
+}
+
+#expedition .materialTable td {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 #expedition .areaTabs a {
   padding-left: 0.2em;
   padding-right: 0.2em;
