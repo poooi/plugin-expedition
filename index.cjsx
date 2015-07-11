@@ -14,7 +14,7 @@ module.exports =
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.3.0"
+  version: "1.3.1"
   reactClass: React.createClass
     getInitialState: ->
       fs = require "fs-extra"
@@ -29,6 +29,8 @@ module.exports =
         fleet_status: [false, false, false]
         fleet_reward: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
         fleet_reward_hour: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        fleet_reward_big: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        fleet_reward_hour_big: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       }
     checkFlagshipLv: (deck_id, flagship_lv, decks, ships) ->
       fleet = decks[deck_id]
@@ -201,7 +203,7 @@ module.exports =
         _daihatsu_count = 4
       return 1 + _daihatsu_count * 0.05
     calculateReward: (exp_id, deck_id, deck_status) ->
-      reward = [[0, 0, 0, 0], [0, 0, 0, 0]]
+      reward = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       {$missions, _decks, _ships, _slotitems} = window
       return reward if exp_id is 0
       return reward unless $missions? and _decks? and _ships? and _slotitems?
@@ -220,6 +222,14 @@ module.exports =
       for i in [0...4]
         reward[0][i] = Math.floor actual_reward[i]
         reward[1][i] = Math.floor reward[0][i] * inv_time
+      coeff *= 1.5
+      actual_reward[0] = expedition.reward_fuel * coeff - mission.api_use_fuel * max_supply[0]
+      actual_reward[1] = expedition.reward_bullet * coeff - mission.api_use_bull * max_supply[1]
+      actual_reward[2] = expedition.reward_steel * coeff
+      actual_reward[3] = expedition.reward_alum * coeff
+      for i in [0...4]
+        reward[2][i] = Math.floor actual_reward[i]
+        reward[3][i] = Math.floor reward[2][i] * inv_time
       return reward
     describeConstraints: (exp_id) ->
       {$shipTypes, $missions} = window
@@ -274,16 +284,22 @@ module.exports =
       status = [false, false, false]
       reward = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       reward_hour = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      reward_big = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      reward_hour_big = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       for deck_id in [1..3]
         ret_status = @examineConstraints exp_id, deck_id
         status[deck_id - 1] = ret_status
         ret_reward = @calculateReward exp_id, deck_id, ret_status
         reward[deck_id - 1] = ret_reward[0]
         reward_hour[deck_id - 1] = ret_reward[1]
+        reward_big[deck_id - 1] = ret_reward[2]
+        reward_hour_big[deck_id - 1] = ret_reward[3]
       @setState
         fleet_status: status
         fleet_reward: reward
         fleet_reward_hour: reward_hour
+        fleet_reward_big: reward_big
+        fleet_reward_hour_big: reward_hour_big
     handleInfoChange: (exp_id) ->
       {information, constraints} = @describeConstraints exp_id
       @setState
@@ -362,20 +378,32 @@ module.exports =
                           <td key={i} width='33.3%'>
                             <OverlayTrigger placement='top' overlay={
                                 <Tooltip>
-                                  <div>收益理论值 (时均收益值)</div>
+                                  <div>远征收益理论值 (时均)</div>
                                   <table width='100%' className='materialTable'>
                                     <tbody>
                                       <tr>
                                         <td width='10%'><img src={getMaterialImage 1} className="material-icon" /></td>
-                                        <td width='40%'>{@state.fleet_reward[i][0]} ({@state.fleet_reward_hour[i][0]})</td>
+                                        <td width='40%'>
+                                          <div>{@state.fleet_reward[i][0]} ({@state.fleet_reward_hour[i][0]})</div>
+                                          <div className='text-success'>{@state.fleet_reward_big[i][0]} ({@state.fleet_reward_hour_big[i][0]})</div>
+                                        </td>
                                         <td width='10%'><img src={getMaterialImage 3} className="material-icon" /></td>
-                                        <td width='40%'>{@state.fleet_reward[i][2]} ({@state.fleet_reward_hour[i][2]})</td>
+                                        <td width='40%'>
+                                          <div>{@state.fleet_reward[i][2]} ({@state.fleet_reward_hour[i][2]})</div>
+                                          <div className='text-success'>{@state.fleet_reward_big[i][2]} ({@state.fleet_reward_hour_big[i][2]})</div>
+                                        </td>
                                       </tr>
                                       <tr>
                                         <td><img src={getMaterialImage 2} className="material-icon" /></td>
-                                        <td>{@state.fleet_reward[i][1]} ({@state.fleet_reward_hour[i][1]})</td>
+                                        <td>
+                                          <div>{@state.fleet_reward[i][1]} ({@state.fleet_reward_hour[i][1]})</div>
+                                          <div className='text-success'>{@state.fleet_reward_big[i][1]} ({@state.fleet_reward_hour_big[i][1]})</div>
+                                        </td>
                                         <td><img src={getMaterialImage 4} className="material-icon" /></td>
-                                        <td>{@state.fleet_reward[i][3]} ({@state.fleet_reward_hour[i][3]})</td>
+                                        <td>
+                                          <div>{@state.fleet_reward[i][3]} ({@state.fleet_reward_hour[i][3]})</div>
+                                          <div className='text-success'>{@state.fleet_reward_big[i][3]} ({@state.fleet_reward_hour_big[i][3]})</div>
+                                        </td>
                                       </tr>
                                     </tbody>
                                   </table>
