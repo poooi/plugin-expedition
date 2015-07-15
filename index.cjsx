@@ -10,7 +10,7 @@ getMaterialImage = (idx) ->
 module.exports =
   name: "expedition"
   priority: 2
-  displayName: [<FontAwesome key={0} name='flag' />, " 远征信息"]
+  displayName: <span><FontAwesome key={0} name='flag' /> 远征信息</span>
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
