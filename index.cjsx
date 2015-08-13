@@ -356,8 +356,8 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[0...4]
-                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
-                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 5}>
+                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
                                           {mission.api_id} {mission.api_name}
                                         </span>
                                         <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
@@ -379,8 +379,8 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[4...8]
-                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
-                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}>
+                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
                                           {mission.api_id} {mission.api_name}
                                         </span>
                                         <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
