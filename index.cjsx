@@ -17,6 +17,7 @@ module.exports =
   version: "1.3.1"
   reactClass: React.createClass
     getInitialState: ->
+      all_status = []
       fs = require "fs-extra"
       json = fs.readJsonSync join(__dirname, "assets", "expedition.json")
       expeditions = []
@@ -280,7 +281,17 @@ module.exports =
         if expedition.big_success?
           constraints.push <li key='big_success'>特殊大成功条件: {expedition.big_success}</li>
       return {information, constraints}
+    getAllStatus: ->
+      all_status = []
+      status = []
+      for mission in $missions when mission?
+        for i in [1..3]
+          status[i - 1] = @examineConstraints mission.api_id, i
+        all_status[mission.api_id] = _.clone(status)
+      @setState
+        all_status: all_status
     handleStatChange: (exp_id) ->
+      all_status = []
       status = [false, false, false]
       reward = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
       reward_hour = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
@@ -294,6 +305,7 @@ module.exports =
         reward_hour[deck_id - 1] = ret_reward[1]
         reward_big[deck_id - 1] = ret_reward[2]
         reward_hour_big[deck_id - 1] = ret_reward[3]
+      @getAllStatus()
       @setState
         fleet_status: status
         fleet_reward: reward
@@ -344,19 +356,47 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[0...4]
-                                    if mission.api_id is @state.expedition_id
-                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id} active>{mission.api_id} {mission.api_name}</ListGroupItem>
-                                    else
-                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
+                                          {mission.api_id} {mission.api_name}
+                                        </span>
+                                        <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
+                                        {
+                                          for i in [0...3]
+                                            <span key={i}>
+                                              {
+                                                if @state.all_status? and @state.all_status[mission.api_id][i]
+                                                  <span className='deckIndicator' style={backgroundColor: "#0F0"}/>
+                                                else
+                                                  <span className='deckIndicator' style={backgroundColor: "#F00"}/>
+                                              }
+                                            </span>
+                                        }
+                                        </span>
+                                      </ListGroupItem>
                                 }
                               </td>
                               <td>
                                 {
                                   for mission in map_missions[4...8]
-                                    if mission.api_id is @state.expedition_id
-                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id} active>{mission.api_id} {mission.api_name}</ListGroupItem>
-                                    else
-                                      <ListGroupItem key={mission.api_id} onClick={@handleExpeditionSelect.bind this, mission.api_id}>{mission.api_id} {mission.api_name}</ListGroupItem>
+                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
+                                          {mission.api_id} {mission.api_name}
+                                        </span>
+                                        <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
+                                        {
+                                          for i in [0...3]
+                                            <span key={i}>
+                                              {
+                                                if @state.all_status? and @state.all_status[mission.api_id][i]
+                                                  <span className='deckIndicator' style={backgroundColor: "#0F0"}/>
+                                                else
+                                                  <span className='deckIndicator' style={backgroundColor: "#F00"}/>
+                                              }
+                                            </span>
+                                        }
+                                        </span>
+                                      </ListGroupItem>
                                 }
                               </td>
                             </tr>
@@ -369,7 +409,7 @@ module.exports =
           </Row>
           <Row>
             <Col xs=12>
-              <Panel header='舰队准备情况' bsStyle='danger' className='fleetPanel'>
+              <Panel header='舰队准备情况' bsStyle='default' className='fleetPanel'>
                 <table width='100%'>
                   <tbody>
                     <tr>
@@ -422,12 +462,12 @@ module.exports =
           <Row>
             <Col xs=12>
               <div className='expInfo'>
-                <Panel header='远征收支' bsStyle='info' className='expAward'>
+                <Panel header='远征收支' bsStyle='default' className='expAward'>
                   <ul>
                     {@state.expedition_information}
                   </ul>
                 </Panel>
-                <Panel header='必要条件' bsStyle='success' className='expCond'>
+                <Panel header='必要条件' bsStyle='default' className='expCond'>
                   <ul>
                     {@state.expedition_constraints}
                   </ul>
