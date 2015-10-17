@@ -1,6 +1,6 @@
 {join} = require "path-extra"
 {_, $, $$, React, ReactBootstrap, FontAwesome, layout} = window
-{Grid, Row, Col, TabbedArea, TabPane, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
+{Grid, Row, Col, Tabs, Tab, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
 
 itemNames = ["", "高速修復材", "高速建造材", "開発資材", "家具箱(小)", "家具箱(中)", "家具箱(大)"]
 
@@ -341,7 +341,7 @@ module.exports =
         <Grid>
           <Row>
             <Col xs=12>
-              <TabbedArea defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs'>
+              <Tabs defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs'>
                 {
                   {$mapareas, $missions} = window
                   if $mapareas?
@@ -349,7 +349,7 @@ module.exports =
                       map_missions = (mission for mission in $missions when mission? and mission.api_maparea_id is maparea.api_id)
                       if map_missions.length is 0
                         continue
-                      <TabPane eventKey={maparea.api_id} key={maparea.api_id} tab={maparea.api_name}>
+                      <Tab eventKey={maparea.api_id} key={maparea.api_id} title={maparea.api_name}>
                         <table width='100%' className='expItems'>
                           <tbody>
                             <tr>
@@ -402,9 +402,9 @@ module.exports =
                             </tr>
                           </tbody>
                         </table>
-                      </TabPane>
+                      </Tab>
                 }
-              </TabbedArea>
+              </Tabs>
             </Col>
           </Row>
           <Row>
