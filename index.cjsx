@@ -14,7 +14,7 @@ module.exports =
   description: "远征信息查询 & 成功条件检查"
   author: "马里酱"
   link: "https://github.com/malichan"
-  version: "1.4.0"
+  version: "1.4.1"
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
