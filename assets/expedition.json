@@ -1147,5 +1147,47 @@
             }
         ],
         "big_success": "无战意高扬舰船亦可能大成功"
+    },
+    {
+        "id": 165,
+        "reward_fuel": 0,
+        "reward_bullet": 0,
+        "reward_steel": 0,
+        "reward_alum": 0,
+        "reward_items": [],
+        "flagship_lv": 0,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ],
+        "big_success": null
+    },
+    {
+        "id": 166,
+        "reward_fuel": 0,
+        "reward_bullet": 0,
+        "reward_steel": 0,
+        "reward_alum": 0,
+        "reward_items": [],
+        "flagship_lv": 0,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 2,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [2],
+                "count": 2
+            }
+        ],
+        "big_success": null
     }
 ]
