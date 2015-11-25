@@ -1,5 +1,5 @@
 {
-  "name": "expedition",
+  "name": "poi-plugin-expedition",
   "version": "1.4.1",
   "description": "show expedition info",
   "main": "index.cjsx",
