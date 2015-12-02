@@ -1,25 +1,46 @@
-{join} = require "path-extra"
+{join} = require 'path-extra'
 {_, $, $$, React, ReactBootstrap, FontAwesome, layout} = window
 {Grid, Row, Col, Tabs, Tab, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
 
-itemNames = ["", "高速修復材", "高速建造材", "開発資材", "家具箱(小)", "家具箱(中)", "家具箱(大)"]
+i18n = require './node_modules/i18n'
+# i18n configure
+i18n.configure({
+    locales: ['en-US', 'ja-JP', 'zh-CN', 'zh-TW'],
+    defaultLocale: 'zh-CN',
+    directory: join(__dirname, 'assets', 'i18n'),
+    updateFiles: false,
+    indent: '\t',
+    extension: '.json'
+})
+i18n.setLocale window.language
+{__} = i18n
+
+itemNames = [
+  '',
+  __('Repair Buckets'),
+  __('Instant Construction'),
+  __('Development Materials'),
+  __('Furniture Box Small'),
+  __('Furniture Box Medium'),
+  __('Furniture Box Large')
+]
 
 getMaterialImage = (idx) ->
-  return "#{ROOT}/assets/img/material/0#{idx}.png"
+  return join(ROOT, 'assets', 'img', 'material', "0#{idx}.png")
 
 module.exports =
-  name: "expedition"
+  name: 'expedition'
   priority: 2
-  displayName: <span><FontAwesome key={0} name='flag' /> 远征信息</span>
-  description: "远征信息查询 & 成功条件检查"
-  author: "马里酱"
-  link: "https://github.com/malichan"
-  version: "1.4.1"
+  displayName: <span><FontAwesome key={0} name='flag' /> {__('Expedition Information')}</span>
+  description: __('Plugin Description')
+  author: '马里酱'
+  link: 'https://github.com/malichan'
+  version: '1.5.0'
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
-      fs = require "fs-extra"
-      json = fs.readJsonSync join(__dirname, "assets", "expedition.json")
+      fs = require 'fs-extra'
+      json = fs.readJsonSync join(__dirname, 'assets', "#{window.language}.json")
       expeditions = []
       expeditions[expedition.id] = expedition for expedition in json
       {
@@ -242,44 +263,80 @@ module.exports =
       if mission?
         hours = mission.api_time // 60;
         minutes = mission.api_time % 60;
-        information.push <li key='time'>远征时间 {hours}:{if minutes < 10 then "0#{minutes}" else minutes}</li>
-        information.push <li key='use_fuel'>消费燃料 {mission.api_use_fuel * 100}%</li>
-        information.push <li key='use_bull'>消费弹药 {mission.api_use_bull * 100}%</li>
+        information.push <li key='time'>{__ 'Time'} {hours}:{if minutes < 10 then "0#{minutes}" else minutes}</li>
+        information.push <li key='use_fuel'>{__ 'Consume Fuel'} {mission.api_use_fuel * 100}%</li>
+        information.push <li key='use_bull'>{__ 'Consume Ammo'} {mission.api_use_bull * 100}%</li>
         if expedition?
           if expedition.reward_fuel isnt 0
-            information.push <li key='reward_fuel'><OverlayTrigger placement='right' overlay={<Tooltip id='fuel-per-hour'>获得燃料 {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / 小时</Tooltip>}><div className='tooltipTrigger'>获得燃料 {expedition.reward_fuel}</div></OverlayTrigger></li>
+            information.push <li key='reward_fuel'>
+                               <OverlayTrigger placement='right' overlay={
+                                 <Tooltip id='fuel-per-hour'>
+                                   {__ 'Fuel'} {Math.round(expedition.reward_fuel * 60 / mission.api_time)} / {__ 'hour(s)'}
+                                 </Tooltip>}>
+                                 <div className='tooltipTrigger'>
+                                   {__ 'Fuel'} {expedition.reward_fuel}
+                                 </div>
+                               </OverlayTrigger>
+                             </li>
           if expedition.reward_bullet isnt 0
-            information.push <li key='reward_bullet'><OverlayTrigger placement='right' overlay={<Tooltip id='bull-per-hour'>获得弹药 {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / 小时</Tooltip>}><div className='tooltipTrigger'>获得弹药 {expedition.reward_bullet}</div></OverlayTrigger></li>
+            information.push <li key='reward_bullet'>
+                               <OverlayTrigger placement='right' overlay={
+                                 <Tooltip id='bull-per-hour'>
+                                   {__ 'Ammo'} {Math.round(expedition.reward_bullet * 60 / mission.api_time)} / {__ 'hour(s)'}
+                                 </Tooltip>}>
+                                 <div className='tooltipTrigger'>
+                                   {__ 'Ammo'} {expedition.reward_bullet}
+                                 </div>
+                               </OverlayTrigger>
+                             </li>
           if expedition.reward_steel isnt 0
-            information.push <li key='reward_steel'><OverlayTrigger placement='right' overlay={<Tooltip id='steel-per-hour'>获得钢材 {Math.round(expedition.reward_steel * 60 / mission.api_time)} / 小时</Tooltip>}><div className='tooltipTrigger'>获得钢材 {expedition.reward_steel}</div></OverlayTrigger></li>
+            information.push <li key='reward_steel'>
+                               <OverlayTrigger placement='right' overlay={
+                                 <Tooltip id='steel-per-hour'>
+                                   {__ 'Steel'} {Math.round(expedition.reward_steel * 60 / mission.api_time)} / {__ 'hour(s)'}
+                                 </Tooltip>}>
+                                 <div className='tooltipTrigger'>
+                                   {__ 'Steel'} {expedition.reward_steel}
+                                 </div>
+                               </OverlayTrigger>
+                             </li>
           if expedition.reward_alum isnt 0
-            information.push <li key='reward_alum'><OverlayTrigger placement='right' overlay={<Tooltip id='bauxite-per-hour'>获得铝土 {Math.round(expedition.reward_alum * 60 / mission.api_time)} / 小时</Tooltip>}><div className='tooltipTrigger'>获得铝土 {expedition.reward_alum}</div></OverlayTrigger></li>
+            information.push <li key='reward_alum'>
+                               <OverlayTrigger placement='right' overlay={
+                                 <Tooltip id='bauxite-per-hour'>
+                                   {__ 'Bauxite'} {Math.round(expedition.reward_alum * 60 / mission.api_time)} / {__ 'hour(s)'}
+                                 </Tooltip>}>
+                                 <div className='tooltipTrigger'>
+                                   {__ 'Bauxite'} {expedition.reward_alum}
+                                 </div>
+                               </OverlayTrigger>
+                             </li>
           if expedition.reward_items.length isnt 0
             for reward_item, i in expedition.reward_items
-              information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number} 个</li>
+              information.push <li key="reward_items_#{i}">{itemNames[reward_item.itemtype]} 0~{reward_item.max_number}</li>
       constraints = []
       if expedition?
         if expedition.flagship_lv isnt 0
-          constraints.push <li key='flagship_lv'>旗舰等级 Lv. {expedition.flagship_lv}</li>
+          constraints.push <li key='flagship_lv'>{__ 'Flagship Lv.'} {expedition.flagship_lv}</li>
         if expedition.fleet_lv isnt 0
-          constraints.push <li key='fleet_lv'>舰队等级合计 Lv. {expedition.fleet_lv}</li>
+          constraints.push <li key='fleet_lv'>{__ 'Total Lv.'} {expedition.fleet_lv}</li>
         if expedition.flagship_shiptype isnt 0
-          constraints.push <li key='flagship_shiptype'>旗舰舰种 {$shipTypes[expedition.flagship_shiptype].api_name}</li>
+          constraints.push <li key='flagship_shiptype'>{__ 'Flagship Type'} {$shipTypes[expedition.flagship_shiptype].api_name}</li>
         if expedition.ship_count isnt 0
-          constraints.push <li key='ship_count'>总舰数 {expedition.ship_count} 只</li>
+          constraints.push <li key='ship_count'>{__ 'Number of ships'} {expedition.ship_count} </li>
         if expedition.drum_ship_count isnt 0
-          constraints.push <li key='drum_ship_count'>装备缶的舰数 {expedition.drum_ship_count} 只</li>
+          constraints.push <li key='drum_ship_count'>{__ 'Minimum of %s ships carrying drum', expedition.drum_ship_count}</li>
         if expedition.drum_count isnt 0
-          constraints.push <li key='drum_count'>装备的缶个数 {expedition.drum_count} 个</li>
+          constraints.push <li key='drum_count'>{__ 'number of drum carriers'} {expedition.drum_count}</li>
         if expedition.required_shiptypes.length isnt 0
           for required_shiptype, i in expedition.required_shiptypes
             stype_name = $shipTypes[required_shiptype.shiptype[0]].api_name
             if required_shiptype.shiptype.length > 1
               for stype in required_shiptype.shiptype[1..]
-                stype_name = stype_name + " 或 " + $shipTypes[stype].api_name
-            constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} 只</li>
+                stype_name = stype_name + __(' or ') + $shipTypes[stype].api_name
+            constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} </li>
         if expedition.big_success?
-          constraints.push <li key='big_success'>特殊大成功条件: {expedition.big_success}</li>
+          constraints.push <li key='big_success'>{__ 'Great Success Requirement(s)'}: {expedition.big_success}</li>
       return {information, constraints}
     getAllStatus: ->
       all_status = []
@@ -332,15 +389,15 @@ module.exports =
           deck_id = postBody.api_deck_id - 1
           exp_id = postBody.api_mission_id
           status = @examineConstraints exp_id, deck_id
-          toggleModal '远征注意！', "第 #{deck_id + 1} 舰队远征 #{$missions[exp_id].api_name} 不满足成功条件，请及时召回！" unless status
+          toggleModal __('Attention!'), __("Fleet %s hasn't reach requirements of %s. Please call back your fleet.", deck_id + 1, $missions[exp_id].api_name) unless status
     componentDidMount: ->
-      window.addEventListener "game.response", @handleResponse
+      window.addEventListener 'game.response', @handleResponse
     render: ->
       <div>
-        <link rel='stylesheet' href={join(__dirname, "assets", "expedition.css")} />
+        <link rel='stylesheet' href={join(__dirname, 'assets', 'expedition.css')} />
         <Grid>
           <Row>
-            <Col xs=12>
+            <Col xs={12}>
               <Tabs defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs'>
                 {
                   {$mapareas, $missions} = window
@@ -356,19 +413,22 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[0...4]
-                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
-                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
+                                      <ListGroupItem key={mission.api_id}
+                                                     className={if mission.api_id is @state.expedition_id then 'active' else '' }
+                                                     style ={display: 'flex', flexFlow:'row nowrap', justifyContent:'space-between'}
+                                                     onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 10}>
                                           {mission.api_id} {mission.api_name}
                                         </span>
-                                        <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
+                                        <span style={flex: 'none', display: 'flex', alignItems: 'center', width:30, justifyContent: 'space-between'}>
                                         {
                                           for i in [0...3]
                                             <span key={i}>
                                               {
                                                 if @state.all_status? and @state.all_status[mission.api_id][i]
-                                                  <span className='deckIndicator' style={backgroundColor: "#0F0"}/>
+                                                  <span className='deckIndicator' style={backgroundColor: '#0F0'}/>
                                                 else
-                                                  <span className='deckIndicator' style={backgroundColor: "#F00"}/>
+                                                  <span className='deckIndicator' style={backgroundColor: '#F00'}/>
                                               }
                                             </span>
                                         }
@@ -379,19 +439,22 @@ module.exports =
                               <td>
                                 {
                                   for mission in map_missions[4...8]
-                                      <ListGroupItem key={mission.api_id} className={if mission.api_id is @state.expedition_id then "active" else "" } style ={display: "flex", flexFlow:"row nowrap", justifyContent:"space-between"} onClick={@handleExpeditionSelect.bind this, mission.api_id}>
-                                        <span style={marginRight: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 10}>
+                                      <ListGroupItem key={mission.api_id}
+                                                     className={if mission.api_id is @state.expedition_id then 'active' else '' }
+                                                     style ={display: 'flex', flexFlow:'row nowrap', justifyContent:'space-between'}
+                                                     onClick={@handleExpeditionSelect.bind this, mission.api_id}>
+                                        <span style={marginRight: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 10}>
                                           {mission.api_id} {mission.api_name}
                                         </span>
-                                        <span style={flex: "none", display: "flex", alignItems: "center", width:30, justifyContent: "space-between"}>
+                                        <span style={flex: 'none', display: 'flex', alignItems: 'center', width:30, justifyContent: 'space-between'}>
                                         {
                                           for i in [0...3]
                                             <span key={i}>
                                               {
                                                 if @state.all_status? and @state.all_status[mission.api_id][i]
-                                                  <span className='deckIndicator' style={backgroundColor: "#0F0"}/>
+                                                  <span className='deckIndicator' style={backgroundColor: '#0F0'}/>
                                                 else
-                                                  <span className='deckIndicator' style={backgroundColor: "#F00"}/>
+                                                  <span className='deckIndicator' style={backgroundColor: '#F00'}/>
                                               }
                                             </span>
                                         }
@@ -408,8 +471,8 @@ module.exports =
             </Col>
           </Row>
           <Row>
-            <Col xs=12>
-              <Panel header='舰队准备情况' bsStyle='default' className='fleetPanel'>
+            <Col xs={12}>
+              <Panel header={__ 'Preparation'} bsStyle='default' className='fleetPanel'>
                 <table width='100%'>
                   <tbody>
                     <tr>
@@ -418,28 +481,28 @@ module.exports =
                           <td key={i} width='33.3%'>
                             <OverlayTrigger placement='top' overlay={
                                 <Tooltip id="fleet-#{i}-resources">
-                                  <div>远征收益理论值 (时均)</div>
+                                  <div>{__ 'theoretical expedition revenue (per hour)'}</div>
                                   <table width='100%' className='materialTable'>
                                     <tbody>
                                       <tr>
-                                        <td width='10%'><img src={getMaterialImage 1} className="material-icon" /></td>
+                                        <td width='10%'><img src={getMaterialImage 1} className='material-icon' /></td>
                                         <td width='40%'>
                                           <div>{@state.fleet_reward[i][0]} ({@state.fleet_reward_hour[i][0]})</div>
                                           <div className='text-success'>{@state.fleet_reward_big[i][0]} ({@state.fleet_reward_hour_big[i][0]})</div>
                                         </td>
-                                        <td width='10%'><img src={getMaterialImage 3} className="material-icon" /></td>
+                                        <td width='10%'><img src={getMaterialImage 3} className='material-icon' /></td>
                                         <td width='40%'>
                                           <div>{@state.fleet_reward[i][2]} ({@state.fleet_reward_hour[i][2]})</div>
                                           <div className='text-success'>{@state.fleet_reward_big[i][2]} ({@state.fleet_reward_hour_big[i][2]})</div>
                                         </td>
                                       </tr>
                                       <tr>
-                                        <td><img src={getMaterialImage 2} className="material-icon" /></td>
+                                        <td><img src={getMaterialImage 2} className='material-icon' /></td>
                                         <td>
                                           <div>{@state.fleet_reward[i][1]} ({@state.fleet_reward_hour[i][1]})</div>
                                           <div className='text-success'>{@state.fleet_reward_big[i][1]} ({@state.fleet_reward_hour_big[i][1]})</div>
                                         </td>
-                                        <td><img src={getMaterialImage 4} className="material-icon" /></td>
+                                        <td><img src={getMaterialImage 4} className='material-icon' /></td>
                                         <td>
                                           <div>{@state.fleet_reward[i][3]} ({@state.fleet_reward_hour[i][3]})</div>
                                           <div className='text-success'>{@state.fleet_reward_big[i][3]} ({@state.fleet_reward_hour_big[i][3]})</div>
@@ -449,7 +512,9 @@ module.exports =
                                   </table>
                                 </Tooltip>
                               }>
-                              <div className='tooltipTrigger'>第{i + 2}艦隊 {if @state.fleet_status[i] then <FontAwesome key={i * 2} name='check' /> else <FontAwesome key={i * 2 + 1} name='close' />}</div>
+                              <div className='tooltipTrigger'>
+                                {__('fleet %s', i + 2)} {if @state.fleet_status[i] then <FontAwesome key={i * 2} name='check' /> else <FontAwesome key={i * 2 + 1} name='close' />}
+                              </div>
                             </OverlayTrigger>
                           </td>
                       }
@@ -460,14 +525,14 @@ module.exports =
             </Col>
           </Row>
           <Row>
-            <Col xs=12>
+            <Col xs={12}>
               <div className='expInfo'>
-                <Panel header='远征收支' bsStyle='default' className='expAward'>
+                <Panel header={__ 'Reward'} bsStyle='default' className='expAward'>
                   <ul>
                     {@state.expedition_information}
                   </ul>
                 </Panel>
-                <Panel header='必要条件' bsStyle='default' className='expCond'>
+                <Panel header={__ 'Note'} bsStyle='default' className='expCond'>
                   <ul>
                     {@state.expedition_constraints}
                   </ul>
