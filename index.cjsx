@@ -1,19 +1,18 @@
 {join} = require 'path-extra'
-{_, $, $$, React, ReactBootstrap, FontAwesome, layout} = window
+{_, $, $$, React, ReactBootstrap, FontAwesome, layout, i18n} = window
 {Grid, Row, Col, Tabs, Tab, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
-
-i18n = require './node_modules/i18n'
 # i18n configure
-i18n.configure({
+i18n.expedition = new(require 'i18n-2')({
     locales: ['en-US', 'ja-JP', 'zh-CN', 'zh-TW'],
     defaultLocale: 'zh-CN',
     directory: join(__dirname, 'assets', 'i18n'),
     updateFiles: false,
     indent: '\t',
-    extension: '.json'
+    extension: '.json',
+    devMode: false
 })
-i18n.setLocale window.language
-{__} = i18n
+i18n.expedition.setLocale window.language
+__ = i18n.expedition.__.bind(i18n.expedition)
 
 itemNames = [
   '',
@@ -35,12 +34,12 @@ module.exports =
   description: __('Plugin Description')
   author: '马里酱'
   link: 'https://github.com/malichan'
-  version: '1.5.0'
+  version: '1.6.0'
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
       fs = require 'fs-extra'
-      json = fs.readJsonSync join(__dirname, 'assets', "#{window.language}.json")
+      json = fs.readJsonSync join(__dirname, 'assets', 'expedition.json')
       expeditions = []
       expeditions[expedition.id] = expedition for expedition in json
       {
@@ -334,7 +333,7 @@ module.exports =
             if required_shiptype.shiptype.length > 1
               for stype in required_shiptype.shiptype[1..]
                 stype_name = stype_name + __(' or ') + $shipTypes[stype].api_name
-            constraints.push <li key="required_shiptypes_#{i}">{stype_name} {required_shiptype.count} </li>
+            constraints.push <li key="required_shiptypes_#{i}">{i18n.resources.__(stype_name)} {required_shiptype.count} </li>
         if expedition.big_success?
           constraints.push <li key='big_success'>{__ 'Great Success Requirement(s)'}: {expedition.big_success}</li>
       return {information, constraints}
