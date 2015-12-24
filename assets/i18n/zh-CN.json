@@ -8,7 +8,7 @@
   "Ammo": "弹药",
   "Steel": "钢材",
   "Bauxite": "铝土",
-  "%s fleet": "第 %s 艦隊",
+  "fleet %s": "第 %s 艦隊",
   "Repair Buckets": "高速修復材",
   "Instant Construction": "高速建造材",
   "Development Materials": "開発資材",
