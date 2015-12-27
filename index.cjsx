@@ -34,7 +34,7 @@ module.exports =
   description: __('Plugin Description')
   author: '马里酱'
   link: 'https://github.com/malichan'
-  version: '2.0.0'
+  version: '2.0.1'
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
