@@ -34,7 +34,7 @@ module.exports =
   description: __('Plugin Description')
   author: '马里酱'
   link: 'https://github.com/malichan'
-  version: '2.0.1'
+  version: '2.0.2'
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
@@ -152,16 +152,6 @@ module.exports =
           _supply_ok = false
           break
       return _supply_ok
-    checkCondition: (deck_id, decks, ships) ->
-      fleet = decks[deck_id]
-      return false unless fleet?
-      _condition_ok = true
-      for ship_id in fleet.api_ship when ship_id isnt -1
-        ship_cond = ships[ship_id].api_cond
-        if ship_cond < 30
-          _condition_ok = false
-          break
-      return _condition_ok
     checkFlagshipHp: (deck_id, decks, ships) ->
       fleet = decks[deck_id]
       return false unless fleet?
@@ -198,7 +188,6 @@ module.exports =
           for required_shiptype in expedition.required_shiptypes
             status &= @checkRequiredShiptype deck_id, required_shiptype, _decks, _ships, $ships
       status &= @checkSupply deck_id, _decks, _ships
-      status &= @checkCondition deck_id, _decks, _ships
       status &= @checkFlagshipHp deck_id, _decks, _ships
       return status
     getMaxSupply: (deck_id, decks, ships) ->
