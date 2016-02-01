@@ -380,6 +380,8 @@ module.exports =
           toggleModal __('Attention!'), __("Fleet %s hasn't reach requirements of %s. Please call back your fleet.", deck_id + 1, $missions[exp_id].api_name) unless status
     componentDidMount: ->
       window.addEventListener 'game.response', @handleResponse
+    componentWillUnmount: ->
+      window.removeEventListener 'game.response', @handleResponse
     render: ->
       <div>
         <link rel='stylesheet' href={join(__dirname, 'assets', 'expedition.css')} />
