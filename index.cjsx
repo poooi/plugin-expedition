@@ -366,7 +366,7 @@ module.exports =
     componentWillUnmount: ->
       window.removeEventListener 'game.response', @handleResponse
     render: ->
-      <div id="expedition" classname="expedition">
+      <div id="expedition" className="expedition">
         <link rel='stylesheet' href={join(__dirname, 'assets', 'expedition.css')} />
         <Grid>
           <Row>
