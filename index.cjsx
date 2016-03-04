@@ -1,18 +1,8 @@
 {join} = require 'path-extra'
 {_, $, $$, React, ReactBootstrap, FontAwesome, layout, i18n} = window
 {Grid, Row, Col, Tabs, Tab, ListGroup, ListGroupItem, Panel, OverlayTrigger, Tooltip} = ReactBootstrap
-# i18n configure
-i18n.expedition = new(require 'i18n-2')({
-    locales: ['en-US', 'ja-JP', 'zh-CN', 'zh-TW'],
-    defaultLocale: 'zh-CN',
-    directory: join(__dirname, 'assets', 'i18n'),
-    updateFiles: false,
-    indent: '\t',
-    extension: '.json',
-    devMode: false
-})
-i18n.expedition.setLocale window.language
-__ = i18n.expedition.__.bind(i18n.expedition)
+
+__ = i18n["poi-plugin-expedition"].__.bind(i18n["poi-plugin-expedition"])
 
 itemNames = [
   '',
@@ -28,13 +18,6 @@ getMaterialImage = (idx) ->
   return join(ROOT, 'assets', 'img', 'material', "0#{idx}.png")
 
 module.exports =
-  name: 'expedition'
-  priority: 2
-  displayName: <span><FontAwesome key={0} name='flag' /> {__('Expedition Information')}</span>
-  description: __('Plugin Description')
-  author: '马里酱'
-  link: 'https://github.com/malichan'
-  version: '2.0.2'
   reactClass: React.createClass
     getInitialState: ->
       all_status = []
@@ -383,7 +366,7 @@ module.exports =
     componentWillUnmount: ->
       window.removeEventListener 'game.response', @handleResponse
     render: ->
-      <div>
+      <div id="expedition" classname="expedition">
         <link rel='stylesheet' href={join(__dirname, 'assets', 'expedition.css')} />
         <Grid>
           <Row>
