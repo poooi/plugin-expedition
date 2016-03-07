@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/poooi/plugin-expedition.git"
   },
-  "author": "malichan",
+  "author": {
+    "name": "马里酱",
+    "link": "https://github.com/malichan"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/poooi/plugin-expedition/issues"
@@ -18,5 +21,11 @@
   "homepage": "https://github.com/poooi/plugin-expedition#readme",
   "dependencies": {
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "poiPlugin": {
+    "title": "Expedition Information",
+    "description": "Plugin Description",
+    "icon": "fa/flag",
+    "priority": 2
+  }
 }
