@@ -82,6 +82,31 @@ module.exports =
         return true
       else
         return false
+    checkDrumAndShipCount: (deck_id, decks, ships, slotitems) ->
+      fleet = decks[deck_id]
+      return false unless fleet?
+      _drum_each_ship = [0, 0]
+      _drum_count = 0
+      for ship_id in fleet.api_ship when ship_id isnt -1
+        _count = 0
+        for slotitem_id in ships[ship_id].api_slot when slotitem_id isnt -1
+          slotitem_slotitemid = slotitems[slotitem_id].api_slotitem_id
+          if slotitem_slotitemid is 75
+            _count += 1
+        if _count >= 1
+          _drum_each_ship[0] += 1
+          if _count >= 2
+            _drum_each_ship[1] += 1
+        _drum_count += _count
+      if _drum_count < 8
+        return false
+      else
+        if _drum_each_ship[1] >= 4
+          return true
+        else if _drum_each_ship[1] >= 2 and _drum_each_ship[0] is 6
+          return true
+        else
+          return false
     checkDrumShipCount: (deck_id, drum_ship_count, decks, ships, slotitems) ->
       fleet = decks[deck_id]
       return false unless fleet?
@@ -163,10 +188,13 @@ module.exports =
           status &= @checkFlagshipShiptype deck_id, expedition.flagship_shiptype, _decks, _ships, $ships
         if expedition.ship_count isnt 0
           status &= @checkShipCount deck_id, expedition.ship_count, _decks
-        if expedition.drum_ship_count isnt 0
-          status &= @checkDrumShipCount deck_id, expedition.drum_ship_count, _decks, _ships, _slotitems
-        if expedition.drum_count isnt 0
-          status &= @checkDrumCount deck_id, expedition.drum_count, _decks, _ships, _slotitems
+        if exp_id is 38
+          status &= @checkDrumAndShipCount deck_id, _decks, _ships, _slotitems
+        else
+          if expedition.drum_ship_count isnt 0
+            status &= @checkDrumShipCount deck_id, expedition.drum_ship_count, _decks, _ships, _slotitems
+          if expedition.drum_count isnt 0
+            status &= @checkDrumCount deck_id, expedition.drum_count, _decks, _ships, _slotitems
         if expedition.required_shiptypes.length isnt 0
           for required_shiptype in expedition.required_shiptypes
             status &= @checkRequiredShiptype deck_id, required_shiptype, _decks, _ships, $ships
