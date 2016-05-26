@@ -399,7 +399,7 @@ module.exports =
         <Grid>
           <Row>
             <Col xs={12}>
-              <Tabs defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs'>
+              <Tabs defaultActiveKey={1} animation={false} bsStyle='pills' className='areaTabs' id='areaTabs'>
                 {
                   {$mapareas, $missions} = window
                   if $mapareas?
