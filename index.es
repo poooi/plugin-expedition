@@ -45,19 +45,18 @@ const constraintError = {
   'required_shiptypes': 'Unmet ship type requirements',
   '*': 'Unknown errors',
 }
-function errorsToTexts(errs) {
-  const rawText = errs.map((err) => constraintError[err] || constraintError['*'])
-  return rawText.map(__)
-}
 function ErrorList({errs, liClassName, ulClassName}) {
   return (
     <ul className={ulClassName}>
     {
-      errorsToTexts(errs).map((text) =>
-        <li className={liClassName}>
-        {text}
-        </li>
-      )
+      errs.map((err) => {
+        const rawText = __(constraintError[err] || constraintError['*'])
+        return (
+          <li key={err} className={liClassName}>
+          {rawText}
+          </li>
+        )
+      })
     }
     </ul>
   )
