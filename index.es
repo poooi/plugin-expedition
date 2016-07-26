@@ -9,8 +9,16 @@ import memoize from 'fast-memoize'
 
 import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
 import { extendReducer } from 'views/createStore'
-const { FontAwesome, i18n, ROOT } = window
+import {
+  createDeepCompareArraySelector,
+  constSelector,
+  fleetShipsIdSelectorFactory,
+  fleetShipsDataSelectorFactory,
+  fleetShipsEquipDataSelectorFactory,
+  extensionSelectorFactory,
+} from 'views/utils/selectors'
 
+const { FontAwesome, i18n, ROOT } = window
 const __ = i18n["poi-plugin-expedition"].__.bind(i18n["poi-plugin-expedition"])
 const REDUCER_EXTENSION_KEY = 'poi-plugin-expedition'
 
@@ -58,14 +66,6 @@ function ErrorList({errs, liClassName, ulClassName}) {
 function getMaterialImage(idx) {
   return join(ROOT, 'assets', 'img', 'material', `0${idx}.png`)
 }
-
-import {
-  constSelector,
-  fleetShipsIdSelectorFactory,
-  fleetShipsDataSelectorFactory,
-  fleetShipsEquipDataSelectorFactory,
-  extensionSelectorFactory,
-} from 'views/utils/selectors'
 
 const fleetShipCountSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsIdSelectorFactory(fleetId),
@@ -406,7 +406,7 @@ const MapAreaPanel = connect(
   )
 })
 
-const preparationCellDataSelectorFactory = memoize((fleetId, expeditionId) =>
+const preparationTooltipDataSelectorFactory = memoize((fleetId, expeditionId) =>
   createSelector([
     constSelector,
     fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId),
@@ -417,11 +417,11 @@ const preparationCellDataSelectorFactory = memoize((fleetId, expeditionId) =>
     rewards,
   }))
 )
-const PreparationCell = connect(
+const PreparationTooltip = connect(
   (state, {fleetId, expeditionId}) => {
-    return preparationCellDataSelectorFactory(fleetId, expeditionId)(state)
+    return preparationTooltipDataSelectorFactory(fleetId, expeditionId)(state)
   }
-)(function PreparationCell({errs, rewards: [normalRewards, greatRewards], time, fleetId}) {
+)(function PreparationTooltip({errs, rewards: [normalRewards, greatRewards], time, fleetId}) {
   const valid = errs.length == 0
   let tooltip
   if (valid) {
@@ -460,21 +460,49 @@ const PreparationCell = connect(
           />
       </div>
   }
+  return tooltip
+})
+
+const PreparationCheck = connect(
+  (state, {fleetId, expeditionId}) => ({
+    errs: fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId)(state),
+  })
+)(function PreparationCheck({errs}) {
+  const valid = errs.length === 0
   return (
-    <OverlayTrigger placement='top' overlay={
-      <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
-      {tooltip}
-      </Tooltip>
-    }>
-      <div className='preparation-cell'>
-        <div className='tooltipTrigger preparation-contents'>
-          {__('fleet %s', fleetId + 1)}
-          <div className='preparation-check'>
-            <FontAwesome name={valid ? 'check' : 'close'} />
-          </div>
+    <FontAwesome name={valid ? 'check' : 'close'} />
+  )
+})
+
+// Connect to empty just to make it pure
+const PreparationPanel = connect(
+  () => ({})
+)(function PreparationPanel({expeditionId}) {
+  return (
+    <Col xs={12}>
+      <Panel header={__('Preparation')} bsStyle='default' className='fleetPanel'>
+        <div className='preparation-row'>
+        {
+          range(1, 4).map((fleetId) =>
+            <OverlayTrigger placement='top' overlay={
+              <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
+                <PreparationTooltip fleetId={fleetId} expeditionId={expeditionId} />
+              </Tooltip>
+            }>
+              <div className='preparation-cell'>
+                <div className='tooltipTrigger preparation-contents'>
+                  {__('fleet %s', fleetId + 1)}
+                  <div className='preparation-check'>
+                    <PreparationCheck  fleetId={fleetId} expeditionId={expeditionId} />
+                  </div>
+                </div>
+              </div>
+            </OverlayTrigger>
+          )
+        }
         </div>
-      </div>
-    </OverlayTrigger>
+      </Panel>
+    </Col>
   )
 })
 
@@ -631,17 +659,7 @@ export const reactClass = connect(
             onSelectExpedition={this.handleSelectExpedition}
           />
           <Row>
-            <Col xs={12}>
-              <Panel header={__('Preparation')} bsStyle='default' className='fleetPanel'>
-                <div className='preparation-row'>
-                {
-                  range(1, 4).map((i) =>
-                    <PreparationCell fleetId={i} expeditionId={this.state.expeditionId} />
-                  )
-                }
-                </div>
-              </Panel>
-            </Col>
+            <PreparationPanel expeditionId={this.state.expeditionId} />
             <DescriptionPanel expeditionId={this.state.expeditionId} />
           </Row>
         </Grid>
