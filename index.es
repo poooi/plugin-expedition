@@ -436,83 +436,92 @@ const descriptionPanelDataSelectorFactory = memoize((expeditionId) =>
     expedition: expeditions[expeditionId] || {},
   }))
 )
-const DescriptionPanel = connect(
-  (state, {expeditionId}) =>
-    descriptionPanelDataSelectorFactory(expeditionId)(state)
-)(function ({$expedition, expedition, $shipTypes, expeditionId}) {
-  // Left panel: Information
-  const information = []
-  const hours = Math.ceil($expedition.api_time / 60)
-  const minutes = $expedition.api_time % 60
-  information.push(<li key='time'>{__('Time')} {hours}:{minutes < 10 ? `0${minutes}` : minutes}</li>)
-  information.push(<li key='use_fuel'>{__('Consume Fuel')} {$expedition.api_use_fuel * 100}%</li>)
-  information.push(<li key='use_bull'>{__('Consume Ammo')} {$expedition.api_use_bull * 100}%</li>)
-  const resourcesKeyText = {
-    reward_fuel: 'Fuel',
-    reward_bullet: 'Ammo',
-    reward_steel: 'Steel',
-    reward_alum: 'Bauxite',
-  }
-  forEach(resourcesKeyText, (text, key) => {
-    if (expedition[key] != 0)
-      information.push(
-        <li key={key}>
-          <OverlayTrigger placement='right' overlay={
-            <Tooltip id={`${key}-per-hour`}>
-              {__(text)} {Math.round(expedition[key] * 60 / $expedition.api_time)} / {__('hour(s)')}
-            </Tooltip>}>
-            <div className='tooltipTrigger'>
-              {__(text)} {expedition[key]}
-            </div>
-          </OverlayTrigger>
-        </li>
-      )
+// This panel is a static function of expedition, we move the whole render
+// into selector
+const descriptionPanelRenderSelectorFactory = memoize((expeditionId) => 
+  createSelector(descriptionPanelDataSelectorFactory(expeditionId),
+  ({$expedition, expedition, $shipTypes, expeditionId}) => {
+    // Left panel: Information
+    const information = []
+    const hours = Math.ceil($expedition.api_time / 60)
+    const minutes = $expedition.api_time % 60
+    information.push(<li key='time'>{__('Time')} {hours}:{minutes < 10 ? `0${minutes}` : minutes}</li>)
+    information.push(<li key='use_fuel'>{__('Consume Fuel')} {$expedition.api_use_fuel * 100}%</li>)
+    information.push(<li key='use_bull'>{__('Consume Ammo')} {$expedition.api_use_bull * 100}%</li>)
+    const resourcesKeyText = {
+      reward_fuel: 'Fuel',
+      reward_bullet: 'Ammo',
+      reward_steel: 'Steel',
+      reward_alum: 'Bauxite',
+    }
+    forEach(resourcesKeyText, (text, key) => {
+      if (expedition[key] != 0)
+        information.push(
+          <li key={key}>
+            <OverlayTrigger placement='right' overlay={
+              <Tooltip id={`${key}-per-hour`}>
+                {__(text)} {Math.round(expedition[key] * 60 / $expedition.api_time)} / {__('hour(s)')}
+              </Tooltip>}>
+              <div className='tooltipTrigger'>
+                {__(text)} {expedition[key]}
+              </div>
+            </OverlayTrigger>
+          </li>
+        )
+    })
+    if (expedition.reward_items && expedition.reward_items.length != 0)
+      expedition.reward_items.forEach((reward_item, i) => {
+        information.push(<li key={`reward_items_${i}`}>{itemNames[reward_item.itemtype]} 0~{reward_item.max_number}</li>)
+      })
+  
+    // Right panel: constraints
+    const constraints = []
+    if (expedition.flagship_lv != 0)
+      constraints.push(<li key='flagship_lv'>{__('Flagship Lv.')} {expedition.flagship_lv}</li>)
+    if (expedition.fleet_lv != 0)
+      constraints.push(<li key='fleet_lv'>{__('Total Lv.')} {expedition.fleet_lv}</li>)
+    if (expedition.flagship_shiptype != 0)
+      constraints.push(<li key='flagship_shiptype'>{__('Flagship Type')} {get($shipTypes, [expedition.flagship_shiptype, 'api_name'], '???')}</li>)
+    if (expedition.ship_count != 0)
+      constraints.push(<li key='ship_count'>{__('Number of ships')} {expedition.ship_count} </li>)
+    if (expedition.drum_ship_count != 0)
+      constraints.push(<li key='drum_ship_count'>{__('Minimum of %s ships carrying drum', expedition.drum_ship_count)}</li>)
+    if (expedition.drum_count != 0)
+      constraints.push(<li key='drum_count'>{__('number of drum carriers')} {expedition.drum_count}</li>)
+    if (expedition.required_shiptypes)
+      expedition.required_shiptypes.forEach((required_shiptype, i) => {
+        const stype_name = joinString(required_shiptype.shiptype.map((ship_type) => get($shipTypes, [ship_type, 'api_name'], '???')), __(' or '))
+        constraints.push(<li key={`required_shiptypes_${i}`}>{i18n.resources.__(stype_name)} {required_shiptype.count} </li>)
+      })
+    if (expedition.big_success)
+      constraints.push(<li key='big_success'>{__('Great Success Requirement(s)')}: {expedition.big_success}</li>)
+  
+    return (
+      <Row>
+        <Col xs={12}>
+          <div className='expInfo'>
+            <Panel header={__('Reward')} bsStyle='default' className='expAward'>
+              <ul>
+                {information}
+              </ul>
+            </Panel>
+            <Panel header={__('Note')} bsStyle='default' className='expCond'>
+              <ul>
+                {constraints}
+              </ul>
+            </Panel>
+          </div>
+        </Col>
+      </Row>
+    )
   })
-  if (expedition.reward_items && expedition.reward_items.length != 0)
-    expedition.reward_items.forEach((reward_item, i) => {
-      information.push(<li key={`reward_items_${i}`}>{itemNames[reward_item.itemtype]} 0~{reward_item.max_number}</li>)
-    })
-
-  // Right panel: constraints
-  const constraints = []
-  if (expedition.flagship_lv != 0)
-    constraints.push(<li key='flagship_lv'>{__('Flagship Lv.')} {expedition.flagship_lv}</li>)
-  if (expedition.fleet_lv != 0)
-    constraints.push(<li key='fleet_lv'>{__('Total Lv.')} {expedition.fleet_lv}</li>)
-  if (expedition.flagship_shiptype != 0)
-    constraints.push(<li key='flagship_shiptype'>{__('Flagship Type')} {get($shipTypes, [expedition.flagship_shiptype, 'api_name'], '???')}</li>)
-  if (expedition.ship_count != 0)
-    constraints.push(<li key='ship_count'>{__('Number of ships')} {expedition.ship_count} </li>)
-  if (expedition.drum_ship_count != 0)
-    constraints.push(<li key='drum_ship_count'>{__('Minimum of %s ships carrying drum', expedition.drum_ship_count)}</li>)
-  if (expedition.drum_count != 0)
-    constraints.push(<li key='drum_count'>{__('number of drum carriers')} {expedition.drum_count}</li>)
-  if (expedition.required_shiptypes)
-    expedition.required_shiptypes.forEach((required_shiptype, i) => {
-      const stype_name = joinString(required_shiptype.shiptype.map((ship_type) => get($shipTypes, [ship_type, 'api_name'], '???')), __(' or '))
-      constraints.push(<li key={`required_shiptypes_${i}`}>{i18n.resources.__(stype_name)} {required_shiptype.count} </li>)
-    })
-  if (expedition.big_success)
-    constraints.push(<li key='big_success'>{__('Great Success Requirement(s)')}: {expedition.big_success}</li>)
-
-  return (
-    <Row>
-      <Col xs={12}>
-        <div className='expInfo'>
-          <Panel header={__('Reward')} bsStyle='default' className='expAward'>
-            <ul>
-              {information}
-            </ul>
-          </Panel>
-          <Panel header={__('Note')} bsStyle='default' className='expCond'>
-            <ul>
-              {constraints}
-            </ul>
-          </Panel>
-        </div>
-      </Col>
-    </Row>
-  )
+)
+const DescriptionPanel = connect(
+  (state, {expeditionId}) => ({
+    rendered: descriptionPanelRenderSelectorFactory(expeditionId)(state),
+  })
+)(function DescriptionPanel({rendered}) {
+  return rendered
 })
 
 export const reactClass = connect(

@@ -100,3 +100,9 @@
   display: inline-block;
   margin-left: 4px;
 }
+#expedition .preparation-check .fa-close {
+  color: red;
+}
+#expedition .preparation-check .fa-check {
+  color: #00ff00;
+}
