@@ -8,15 +8,6 @@
   height: 18px;
 }
 
-.expedition-materialTable {
-  width: 180px;
-}
-.expedition-materialTable td {
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 #expedition .areaTabs a {
   padding-left: 0.2em;
   padding-right: 0.2em;
@@ -108,4 +99,23 @@
 }
 #expedition .preparation-check .fa-check {
   color: #00ff00;
+}
+
+/* Tooltips. Not to be wrapped in #expedition */
+.expedition-materialTable {
+  width: 180px;
+}
+.expedition-materialTable td {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.preparation-tooltip-ul {
+  padding-left: 15px;
+  min-width: 100px;
+  margin-top: 2px;
+  margin-bottom: 5px;
+}
+.preparation-tooltip-li {
+  text-align: left;
 }

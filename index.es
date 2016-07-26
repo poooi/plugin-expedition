@@ -24,6 +24,37 @@ const itemNames = [
   __('Furniture Box Large'),
 ]
 
+const constraintError = {
+  'inexist': 'Expedition not found',
+  'flagship_unhealthy': 'Flagship heavily damaged',
+  'resupply': 'Fleet not resupplied',
+  'flagship_lv': 'Flagship level too low',
+  'fleet_lv': 'Fleet total level too low',
+  'flagship_shiptype': 'Incorrect flagship type',
+  'ship_count': 'Not enough ships',
+  'drum_ship_count': 'Not enough drum carriers',
+  'drum_count': 'Not enough drums',
+  'required_shiptypes': 'Unmet ship type requirements',
+  '*': 'Unknown errors',
+}
+function errorsToTexts(errs) {
+  const rawText = errs.map((err) => constraintError[err] || constraintError['*'])
+  return rawText.map(__)
+}
+function ErrorList({errs, liClassName, ulClassName}) {
+  return (
+    <ul className={ulClassName}>
+    {
+      errorsToTexts(errs).map((text) =>
+        <li className={liClassName}>
+        {text}
+        </li>
+      )
+    }
+    </ul>
+  )
+}
+
 function getMaterialImage(idx) {
   return join(ROOT, 'assets', 'img', 'material', `0${idx}.png`)
 }
@@ -245,6 +276,10 @@ const fleetExpeditionErrorsSelectorFactory = memoize((fleetId, expeditionId) =>
       return ['inexist']
 
     const errs = []
+    if (!props.flagshipHealthy)
+      errs.push('flagship_unhealthy')
+    if (!props.fullyResupplied)
+      errs.push('resupply')
     if (expedition.flagship_lv != 0 && props.flagshipLv < expedition.flagship_lv)
       errs.push('flagship_lv')
     if (expedition.fleet_lv != 0 && props.totalLv < expedition.fleet_lv)
@@ -387,33 +422,50 @@ const PreparationCell = connect(
     return preparationCellDataSelectorFactory(fleetId, expeditionId)(state)
   }
 )(function PreparationCell({errs, rewards: [normalRewards, greatRewards], time, fleetId}) {
-  const hourly = (reward) => Math.round(reward / time * 60)
-  const rewardsCell = range(4).map((i) => [
-    <td width='10%'><img src={getMaterialImage(i+1)} className='material-icon' /></td>,
-    <td width='40%'>
-      <div>{normalRewards[i]} ({hourly(normalRewards[i])})</div>
-      <div className='text-success'>{greatRewards[i]} ({hourly(greatRewards[i])})</div>
-    </td>,
-  ])
   const valid = errs.length == 0
+  let tooltip
+  if (valid) {
+    const hourly = (reward) => Math.round(reward / time * 60)
+    const rewardsCell = range(4).map((i) => [
+      <td width='10%'><img src={getMaterialImage(i+1)} className='material-icon' /></td>,
+      <td width='40%'>
+        <div>{normalRewards[i]} ({hourly(normalRewards[i])})</div>
+        <div className='text-success'>{greatRewards[i]} ({hourly(greatRewards[i])})</div>
+      </td>,
+    ])
+    tooltip = 
+      <div>
+        <div>{__('theoretical expedition revenue (per hour)')}</div>
+        <table width='100%' className='expedition-materialTable'>
+          <tbody>
+            <tr>
+              {rewardsCell[0]  /* Fuel */   }
+              {rewardsCell[2]  /* Steel */  }
+            </tr>
+            <tr>
+              {rewardsCell[1]  /* Ammo */   }
+              {rewardsCell[3]  /* Bauxite */}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  } else {
+    tooltip = 
+      <div>
+        <div>{__('Unmet requirements')}</div>
+        <ErrorList
+          errs={errs}
+          ulClassName='preparation-tooltip-ul'
+          liClassName='preparation-tooltip-li'
+          />
+      </div>
+  }
   return (
     <OverlayTrigger placement='top' overlay={
       <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
-        <div>{__('theoretical expedition revenue (per hour)')}</div>
-          <table width='100%' className='expedition-materialTable'>
-            <tbody>
-              <tr>
-                {rewardsCell[0]  /* Fuel */   }
-                {rewardsCell[2]  /* Steel */  }
-              </tr>
-              <tr>
-                {rewardsCell[1]  /* Ammo */   }
-                {rewardsCell[3]  /* Bauxite */}
-              </tr>
-            </tbody>
-          </table>
-        </Tooltip>
-      }>
+      {tooltip}
+      </Tooltip>
+    }>
       <div className='preparation-cell'>
         <div className='tooltipTrigger preparation-contents'>
           {__('fleet %s', fleetId + 1)}
@@ -553,7 +605,12 @@ export const reactClass = connect(
       const expeditionId = postBody.api_mission_id
       const errs = fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId)(this.props.state)
       if (errs.length)
-        window.toggleModal(__('Attention!'), __("Fleet %s hasn't reach requirements of %s. Please call back your fleet.", fleetId + 1, this.props.$expeditions[expeditionId].api_name))
+        window.toggleModal(__('Attention!'),
+          <div>
+            {__("Fleet %s hasn't reach requirements of %s. Please call back your fleet.", fleetId + 1, this.props.$expeditions[expeditionId].api_name)}
+            <ErrorList errs={errs} />
+          </div>
+        )
       break
     }
     }

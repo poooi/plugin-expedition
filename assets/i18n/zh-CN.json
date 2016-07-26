@@ -30,5 +30,17 @@
   "Fleet %s hasn't reach requirements of %s. Please call back your fleet.": "第 %s 舰队远征 %s 不满足成功条件，请及时召回！",
   "Attention!": "远征注意！",
   "Preparation": "舰队准备情况",
-  "theoretical expedition revenue (per hour)": "远征收益理论值 (时均)"
+  "theoretical expedition revenue (per hour)": "远征收益理论值 (时均)",
+  "Unmet requirements": "以下条件未满足",
+  "Expedition not found": "找不到该远征",
+  "Flagship heavily damaged": "旗舰大破",
+  "Fleet not resupplied": "舰队未补给",
+  "Flagship level too low": "旗舰等级太低",
+  "Fleet total level too low": "舰队总等级太低",
+  "Incorrect flagship type": "旗舰舰种不符",
+  "Not enough ships": "舰船数量不足",
+  "Not enough drum carriers": "没有足够舰船装备运输缶",
+  "Not enough drums": "没有足够运输缶",
+  "Unmet ship type requirements": "舰队船种不符",
+  "Unknown errors": "其它未知错误"
 }

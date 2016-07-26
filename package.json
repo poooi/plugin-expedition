@@ -26,9 +26,9 @@
     "title": "Expedition Information",
     "description": "Plugin Description",
     "icon": "fa/flag",
-    "priority": 2
+    "priority": 2,
     "apiVer": {
-      "6.9.9": "2.9.9"
+      "6.99.99": "2.1.1"
     }
   }
 }
