@@ -8,7 +8,10 @@
   height: 18px;
 }
 
-#expedition .materialTable td {
+.expedition-materialTable {
+  width: 180px;
+}
+.expedition-materialTable td {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;

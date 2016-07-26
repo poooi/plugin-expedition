@@ -400,7 +400,7 @@ const PreparationCell = connect(
     <OverlayTrigger placement='top' overlay={
       <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
         <div>{__('theoretical expedition revenue (per hour)')}</div>
-          <table width='100%' className='materialTable'>
+          <table width='100%' className='expedition-materialTable'>
             <tbody>
               <tr>
                 {rewardsCell[0]  /* Fuel */   }
