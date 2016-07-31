@@ -114,7 +114,7 @@ function isDrum(equipData) {
 // Returns the total number of drums equipped in the fleet 
 const fleetDrumCountSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData) =>
+    (shipsEquipData=[]) =>
       sum(shipsEquipData.map((equipsData) =>
         equipsData.filter(isDrum).length
       ))
@@ -124,7 +124,7 @@ const fleetDrumCountSelectorFactory = memoize((fleetId) =>
 // Returns the total number of ships with a drum equipped in the fleet 
 const fleetDrumCarrierCountSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData) =>
+    (shipsEquipData=[]) =>
       shipsEquipData.filter((equipsData) =>
         equipsData.find(isDrum)
       ).length
@@ -264,7 +264,7 @@ const fleetExpeditionErrorsSelectorFactory = memoize((fleetId, expeditionId) =>
     constSelector,
     expeditionDataSelector,
     fleetPropertiesSelectorFactory(fleetId),
-  ], ({$missions: $expeditions}, expeditions, props) => {
+  ], ({$missions: $expeditions={}}, expeditions={}, props={}) => {
     const $expedition = $expeditions[expeditionId]
     if (!$expedition)
       return ['inexist']
