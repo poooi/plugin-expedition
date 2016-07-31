@@ -522,11 +522,12 @@ const descriptionPanelRenderSelectorFactory = memoize((expeditionId) =>
   ({$expedition, expedition, $shipTypes, expeditionId}) => {
     // Left panel: Information
     const information = []
-    const hours = Math.ceil($expedition.api_time / 60)
-    const minutes = $expedition.api_time % 60
+    const time = $expedition.api_time || 0
+    const hours = Math.ceil(time / 60)
+    const minutes = time % 60
     information.push(<li key='time'>{__('Time')} {hours}:{minutes < 10 ? `0${minutes}` : minutes}</li>)
-    information.push(<li key='use_fuel'>{__('Consume Fuel')} {$expedition.api_use_fuel * 100}%</li>)
-    information.push(<li key='use_bull'>{__('Consume Ammo')} {$expedition.api_use_bull * 100}%</li>)
+    information.push(<li key='use_fuel'>{__('Consume Fuel')} {$expedition.api_use_fuel * 100 || 0}%</li>)
+    information.push(<li key='use_bull'>{__('Consume Ammo')} {$expedition.api_use_bull * 100 || 0}%</li>)
     const resourcesKeyText = {
       reward_fuel: 'Fuel',
       reward_bullet: 'Ammo',
