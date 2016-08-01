@@ -426,8 +426,8 @@ const PreparationTooltip = connect(
   if (valid) {
     const hourly = (reward) => Math.round(reward / time * 60)
     const rewardsCell = range(4).map((i) => [
-      <td width='10%'><img src={getMaterialImage(i+1)} className='material-icon' /></td>,
-      <td width='40%'>
+      <td key={'1'+i} width='10%'><img src={getMaterialImage(i+1)} className='material-icon' /></td>,
+      <td key={'2'+i} width='40%'>
         <div>{normalRewards[i]} ({hourly(normalRewards[i])})</div>
         <div className='text-success'>{greatRewards[i]} ({hourly(greatRewards[i])})</div>
       </td>,
@@ -483,7 +483,7 @@ const PreparationPanel = connect(
         <div className='preparation-row'>
         {
           range(1, 4).map((fleetId) =>
-            <OverlayTrigger placement='top' overlay={
+            <OverlayTrigger key={fleetId} placement='top' overlay={
               <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
                 <PreparationTooltip fleetId={fleetId} expeditionId={expeditionId} />
               </Tooltip>
