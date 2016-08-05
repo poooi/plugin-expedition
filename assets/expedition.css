@@ -1,3 +1,7 @@
+#expedition {
+  margin: 0 15px;
+}
+
 #expedition .tooltipTrigger {
   display: inline-block;
 }
