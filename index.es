@@ -199,7 +199,7 @@ function landingCraftFactor(equipData) {
 // e.g. 20 means 20% bonus, or x1.2 factor
 const fleetLandingCraftFactorSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData) => {
+    (shipsEquipData=[]) => {
       const landingCrafts = flatten(shipsEquipData.map((equipsData) =>
         equipsData.map(landingCraftFactor).filter(Boolean)
       ))
@@ -312,7 +312,7 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
     fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId),
     fleetLandingCraftFactorSelectorFactory(fleetId),
     fleetMaxResupplySelectorFactory(fleetId),
-  ], ({$missions: $expeditions}, expeditions, errs, lcFactor, maxResupply) => {
+  ], ({$missions: $expeditions={}}, expeditions, errs, lcFactor, maxResupply) => {
     const $expedition = $expeditions[expeditionId]
     if (!$expedition)
       return [[0, 0, 0, 0], [0, 0, 0, 0]]
@@ -410,7 +410,7 @@ const preparationTooltipDataSelectorFactory = memoize((fleetId, expeditionId) =>
     constSelector,
     fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId),
     fleetExpeditionRewardsSelectorFactory(fleetId, expeditionId),
-  ], ({$missions: $expeditions}, errs, rewards) => ({
+  ], ({$missions: $expeditions={}}, errs, rewards) => ({
     time: ($expeditions[expeditionId] || {}).api_time || 60, // Random non-0 default
     errs,
     rewards,
