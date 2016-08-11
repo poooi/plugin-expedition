@@ -8,7 +8,7 @@ import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
 
 import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
-import { extendReducer } from 'views/createStore'
+import { store, extendReducer } from 'views/createStore'
 import {
   createDeepCompareArraySelector,
   constSelector,
@@ -668,8 +668,10 @@ export const reactClass = connect(
   }
 })
 
-function reducer(state, action) {
-  if (!state) {
+export function reducer(state={}, action) {
+  const {type} = action
+  switch (type) {
+  case '@@poi-plugin-expedition@init':
     const expeditionData = readJsonSync(join(__dirname, 'assets', 'expedition.json'))
     return {
       expeditions: keyBy(expeditionData, 'id'),
@@ -677,4 +679,7 @@ function reducer(state, action) {
   }
   return state
 }
-setTimeout(()=>extendReducer(REDUCER_EXTENSION_KEY, reducer), 0)
+
+export function pluginDidLoad() {
+  store.dispatch({type: '@@poi-plugin-expedition@init'})
+}
