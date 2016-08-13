@@ -111,7 +111,7 @@ function isDrum(equipData) {
   return equipData && equipData[1] && equipData[1].api_id == 75
 }
 
-// Returns the total number of drums equipped in the fleet 
+// Returns the total number of drums equipped in the fleet
 const fleetDrumCountSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
     (shipsEquipData=[]) =>
@@ -121,7 +121,7 @@ const fleetDrumCountSelectorFactory = memoize((fleetId) =>
   )
 )
 
-// Returns the total number of ships with a drum equipped in the fleet 
+// Returns the total number of ships with a drum equipped in the fleet
 const fleetDrumCarrierCountSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
     (shipsEquipData=[]) =>
@@ -135,7 +135,7 @@ function shipNotHeavilyDamaged(ship) {
   return ship.api_nowhp * 4 >= ship.api_maxhp
 }
 
-// Returns false if the flagship is heavily damaged 
+// Returns false if the flagship is heavily damaged
 const fleetFlagshipHealthySelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsDataSelectorFactory(fleetId),
     (shipsData) =>
@@ -156,7 +156,7 @@ function shipFullyResupplied(shipData=[]) {
 const fleetFullyResuppliedSelectorFactory = memoize((fleetId) =>
   createSelector(fleetShipsDataSelectorFactory(fleetId),
     (shipsData) =>
-      shipsData == null 
+      shipsData == null
         ? true
         : shipsData.every(shipFullyResupplied)
   )
@@ -212,7 +212,7 @@ const fleetLandingCraftFactorSelectorFactory = memoize((fleetId) =>
   )
 )
 
-const fleetPropertiesSelectorFactory = memoize((fleetId) => 
+const fleetPropertiesSelectorFactory = memoize((fleetId) =>
   createSelector([
     fleetShipCountSelectorFactory(fleetId),
     fleetFlagshipLvSelectorFactory(fleetId),
@@ -293,7 +293,7 @@ const fleetExpeditionErrorsSelectorFactory = memoize((fleetId, expeditionId) =>
       errs.push('drum_count')
     if (expedition.required_shiptypes.length != 0) {
       const valid = expedition.required_shiptypes.every(({shiptype, count}) =>
-        props.shipsType.filter((t) => shiptype.includes(t)).length >= count 
+        props.shipsType.filter((t) => shiptype.includes(t)).length >= count
       )
       if (!valid)
         errs.push('required_shiptypes')
@@ -374,7 +374,7 @@ const MapAreaPanel = connect(
                 </span>
                 <span style={{flex: 'none', display: 'flex', alignItems: 'center', width:30, justifyContent: 'space-between'}}>
                 {
-                  range(1, 4).map((fleetId) => 
+                  range(1, 4).map((fleetId) =>
                     <FleetExpeditionIndicator fleetId={fleetId} expeditionId={$expedition.api_id} key={fleetId} />
                   )
                 }
@@ -432,7 +432,7 @@ const PreparationTooltip = connect(
         <div className='text-success'>{greatRewards[i]} ({hourly(greatRewards[i])})</div>
       </td>,
     ])
-    tooltip = 
+    tooltip =
       <div>
         <div>{__('theoretical expedition revenue (per hour)')}</div>
         <table width='100%' className='expedition-materialTable'>
@@ -449,7 +449,7 @@ const PreparationTooltip = connect(
         </table>
       </div>
   } else {
-    tooltip = 
+    tooltip =
       <div>
         <div>{__('Unmet requirements')}</div>
         <ErrorList
@@ -505,7 +505,7 @@ const PreparationPanel = connect(
   )
 })
 
-const descriptionPanelDataSelectorFactory = memoize((expeditionId) => 
+const descriptionPanelDataSelectorFactory = memoize((expeditionId) =>
   createSelector([
     constSelector,
     expeditionDataSelector,
@@ -517,13 +517,13 @@ const descriptionPanelDataSelectorFactory = memoize((expeditionId) =>
 )
 // This panel is a static function of expedition, we move the whole render
 // into selector
-const descriptionPanelRenderSelectorFactory = memoize((expeditionId) => 
+const descriptionPanelRenderSelectorFactory = memoize((expeditionId) =>
   createSelector(descriptionPanelDataSelectorFactory(expeditionId),
   ({$expedition, expedition, $shipTypes, expeditionId}) => {
     // Left panel: Information
     const information = []
     const time = $expedition.api_time || 0
-    const hours = Math.ceil(time / 60)
+    const hours = Math.floor(time / 60)
     const minutes = time % 60
     information.push(<li key='time'>{__('Time')} {hours}:{minutes < 10 ? `0${minutes}` : minutes}</li>)
     information.push(<li key='use_fuel'>{__('Consume Fuel')} {$expedition.api_use_fuel * 100 || 0}%</li>)
@@ -553,7 +553,7 @@ const descriptionPanelRenderSelectorFactory = memoize((expeditionId) =>
       expedition.reward_items.forEach((reward_item, i) => {
         information.push(<li key={`reward_items_${i}`}>{itemNames[reward_item.itemtype]} 0~{reward_item.max_number}</li>)
       })
-  
+
     // Right panel: constraints
     const constraints = []
     if (expedition.flagship_lv != 0)
@@ -575,7 +575,7 @@ const descriptionPanelRenderSelectorFactory = memoize((expeditionId) =>
       })
     if (expedition.big_success)
       constraints.push(<li key='big_success'>{__('Great Success Requirement(s)')}: {expedition.big_success}</li>)
-  
+
     return (
       <Row>
         <Col xs={12}>
