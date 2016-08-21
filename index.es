@@ -1,16 +1,16 @@
 import { join } from 'path-extra'
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { readJsonSync } from 'fs-extra'
 import { Grid, Row, Col, Tabs, Tab, ListGroupItem, Panel, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { map, keyBy, sum, join as joinString, range, forEach, flatten, groupBy, get } from 'lodash'
 import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
+import shallowCompare from 'react-addons-shallow-compare'
 
 import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
-import { store, extendReducer } from 'views/createStore'
+import { store } from 'views/createStore'
 import {
-  createDeepCompareArraySelector,
   constSelector,
   fleetShipsIdSelectorFactory,
   fleetShipsDataSelectorFactory,
@@ -232,6 +232,15 @@ const fleetPropertiesSelectorFactory = memoize((fleetId) =>
     /* eslint-enable indent */
 )
 
+// Returns [f1, f2, f3] where fx is the fleetProperties of fleet x
+// Notice that you should use the form "result[fleetId-1]"
+const fleetsPropertiesSelectorFactory = createSelector([
+  fleetPropertiesSelectorFactory(1),
+  fleetPropertiesSelectorFactory(2),
+  fleetPropertiesSelectorFactory(3),
+], (f1, f2, f3) => [f1, f2, f3]
+)
+
 const expeditionDataSelector = createSelector(
   extensionSelectorFactory(REDUCER_EXTENSION_KEY),
   (state={}) => state.expeditions || {}
@@ -259,48 +268,44 @@ const SupportExpeditionData = {
 }
 
 // Returns [ <error_code> ]
-const fleetExpeditionErrorsSelectorFactory = memoize((fleetId, expeditionId) =>
-  createSelector([
-    constSelector,
-    expeditionDataSelector,
-    fleetPropertiesSelectorFactory(fleetId),
-  ], ({$missions: $expeditions={}}, expeditions={}, props={}) => {
-    const $expedition = $expeditions[expeditionId]
-    if (!$expedition)
-      return ['inexist']
-    const expedition = expeditions[expeditionId] ? expeditions[expeditionId] :
-      $expedition.api_return_flag == 0 ? SupportExpeditionData : null
-    // Has $expedition, but no expedition data, and not a support expedition
-    if (!expedition)
-      return ['inexist']
+function expeditionErrors(fleetProperties, $expedition, expeditionData) {
+  const errorInexist = ['inexist']
+  const props = fleetProperties     // Make it shorter
 
-    const errs = []
-    if (!props.flagshipHealthy)
-      errs.push('flagship_unhealthy')
-    if (!props.fullyResupplied)
-      errs.push('resupply')
-    if (expedition.flagship_lv != 0 && props.flagshipLv < expedition.flagship_lv)
-      errs.push('flagship_lv')
-    if (expedition.fleet_lv != 0 && props.totalLv < expedition.fleet_lv)
-      errs.push('fleet_lv')
-    if (expedition.flagship_shiptype != 0 && props.flagshipType != expedition.flagship_shiptype)
-      errs.push('flagship_shiptype')
-    if (expedition.ship_count != 0 && props.shipCount < expedition.ship_count)
-      errs.push('ship_count')
-    if (expedition.drum_ship_count != 0 && props.drumCarrierCount < expedition.drum_ship_count)
-      errs.push('drum_ship_count')
-    if (expedition.drum_count != 0 && props.drumCount < expedition.drum_count)
-      errs.push('drum_count')
-    if (expedition.required_shiptypes.length != 0) {
-      const valid = expedition.required_shiptypes.every(({shiptype, count}) =>
-        props.shipsType.filter((t) => shiptype.includes(t)).length >= count
-      )
-      if (!valid)
-        errs.push('required_shiptypes')
-    }
-    return errs
-  })
-)
+  if (!$expedition)
+    return errorInexist
+  const expedition = expeditionData ? expeditionData :
+    $expedition.api_return_flag == 0 ? SupportExpeditionData : null
+  // Has $expedition, but no expedition data, and not a support expedition
+  if (!expedition)
+    return errorInexist
+
+  const errs = []
+  if (!props.flagshipHealthy)
+    errs.push('flagship_unhealthy')
+  if (!props.fullyResupplied)
+    errs.push('resupply')
+  if (expedition.flagship_lv != 0 && props.flagshipLv < expedition.flagship_lv)
+    errs.push('flagship_lv')
+  if (expedition.fleet_lv != 0 && props.totalLv < expedition.fleet_lv)
+    errs.push('fleet_lv')
+  if (expedition.flagship_shiptype != 0 && props.flagshipType != expedition.flagship_shiptype)
+    errs.push('flagship_shiptype')
+  if (expedition.ship_count != 0 && props.shipCount < expedition.ship_count)
+    errs.push('ship_count')
+  if (expedition.drum_ship_count != 0 && props.drumCarrierCount < expedition.drum_ship_count)
+    errs.push('drum_ship_count')
+  if (expedition.drum_count != 0 && props.drumCount < expedition.drum_count)
+    errs.push('drum_count')
+  if (expedition.required_shiptypes.length != 0) {
+    const valid = expedition.required_shiptypes.every(({shiptype, count}) =>
+      props.shipsType.filter((t) => shiptype.includes(t)).length >= count
+    )
+    if (!valid)
+      errs.push('required_shiptypes')
+  }
+  return errs
+}
 
 // Returns [ normalRewards, greatRewards ]
 // where rewards := [ fuel, ammo, steel, bauxite ]
@@ -309,15 +314,14 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
   createSelector([
     constSelector,
     expeditionDataSelector,
-    fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId),
     fleetLandingCraftFactorSelectorFactory(fleetId),
     fleetMaxResupplySelectorFactory(fleetId),
-  ], ({$missions: $expeditions={}}, expeditions, errs, lcFactor, maxResupply) => {
+  ], ({$missions: $expeditions={}}, expeditions, lcFactor, maxResupply) => {
     const $expedition = $expeditions[expeditionId]
     if (!$expedition)
       return [[0, 0, 0, 0], [0, 0, 0, 0]]
     const expedition = expeditions[expeditionId] || SupportExpeditionData
-    const baseRewards = errs.length ? [0, 0, 0, 0] :
+    const baseRewards = 
       ["reward_fuel", "reward_bullet", "reward_steel", "reward_alum"]
       .map((key) => expedition[key])
     const lcRewards = arrayMultiply(baseRewards, 1 + lcFactor / 100)
@@ -332,27 +336,39 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
   })
 )
 
-const FleetExpeditionIndicator = connect((state, {fleetId, expeditionId}) => ({
-  errs: fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId)(state),
-})
-)(function FleetExpeditionIndicator({errs}) {
-  const valid = errs.length == 0
-  const indicatorColor = valid ? '#0F0' : '#F00'
-  return (
-    <span>
-      <span className='deckIndicator' style={{backgroundColor: indicatorColor}}/>
-    </span>
-  )
-})
+class FleetExpeditionIndicator extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
+
+  static propTypes = {
+    valid: PropTypes.bool,
+  }
+
+  render() {
+    const {valid} = this.props
+    const indicatorColor = valid ? '#0F0' : '#F00'
+    return (
+      <span>
+        <span className='deckIndicator' style={{backgroundColor: indicatorColor}}/>
+      </span>
+    )
+  }
+}
 
 const MapAreaPanel = connect(
   createSelector([
     constSelector,
-  ], ({$missions: $expeditions, $mapareas}) => ({
+    fleetsPropertiesSelectorFactory,
+    expeditionDataSelector,
+  ], ({$missions: $expeditions, $mapareas}, fleetsProperties, expeditionsData) => ({
     mapareas$Expeditions: groupBy($expeditions, 'api_maparea_id'),
     $mapareas: $mapareas || {},
+    fleetsProperties,
+    expeditionsData,
   }))
-)(function MapAreaPanel({$mapareas, mapareas$Expeditions, onSelectExpedition, activeExpeditionId}) {
+)(function MapAreaPanel(props) {
+  const {$mapareas, mapareas$Expeditions, onSelectExpedition, activeExpeditionId, fleetsProperties, expeditionsData} = props
   return (
     <Row>
       <Col xs={12}>
@@ -362,25 +378,34 @@ const MapAreaPanel = connect(
             const $expeditions = mapareas$Expeditions[mapareaId]
             if (!$expeditions)
               return
-            const expeditionDisplays = $expeditions.map(($expedition) =>
-              <ListGroupItem
-                key={$expedition.api_id}
-                className={$expedition.api_id == activeExpeditionId ? 'active' : '' }
-                style={{display: 'flex', flexFlow:'row nowrap', justifyContent:'space-between'}}
-                onClick={onSelectExpedition.bind(this, $expedition.api_id)}
-              >
-                <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 10}}>
-                  {$expedition.api_id} {$expedition.api_name}
-                </span>
-                <span style={{flex: 'none', display: 'flex', alignItems: 'center', width:30, justifyContent: 'space-between'}}>
-                {
-                  range(1, 4).map((fleetId) =>
-                    <FleetExpeditionIndicator fleetId={fleetId} expeditionId={$expedition.api_id} key={fleetId} />
-                  )
-                }
-                </span>
-              </ListGroupItem>
-            )
+            const expeditionDisplays = $expeditions.map(($expedition) => {
+              const {api_id} = $expedition
+              return (
+                <ListGroupItem
+                  key={api_id}
+                  className={api_id == activeExpeditionId ? 'active' : '' }
+                  style={{display: 'flex', flexFlow:'row nowrap', justifyContent:'space-between'}}
+                  onClick={onSelectExpedition.bind(this, api_id)}
+                >
+                  <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 10}}>
+                    {api_id} {$expedition.api_name}
+                  </span>
+                  <span style={{flex: 'none', display: 'flex', alignItems: 'center', width: 30, justifyContent: 'space-between'}}>
+                  {
+                    range(1, 4).map((fleetId) => {
+                      const errs = expeditionErrors(fleetsProperties[fleetId-1], $expedition, expeditionsData[api_id])
+                      return (
+                        <FleetExpeditionIndicator
+                          valid={errs.length === 0}
+                          key={fleetId}
+                        />
+                      )
+                    })
+                  }
+                  </span>
+                </ListGroupItem>
+              )
+            })
             return (
               <Tab eventKey={$maparea.api_id} key={$maparea.api_id} title={$maparea.api_name}>
                 <table width='100%' className='expItems'>
@@ -408,11 +433,9 @@ const MapAreaPanel = connect(
 const preparationTooltipDataSelectorFactory = memoize((fleetId, expeditionId) =>
   createSelector([
     constSelector,
-    fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId),
     fleetExpeditionRewardsSelectorFactory(fleetId, expeditionId),
-  ], ({$missions: $expeditions={}}, errs, rewards) => ({
+  ], ({$missions: $expeditions={}}, rewards) => ({
     time: ($expeditions[expeditionId] || {}).api_time || 60, // Random non-0 default
-    errs,
     rewards,
   }))
 )
@@ -462,42 +485,46 @@ const PreparationTooltip = connect(
   return tooltip
 })
 
-const PreparationCheck = connect(
-  (state, {fleetId, expeditionId}) => ({
-    errs: fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId)(state),
-  })
-)(function PreparationCheck({errs}) {
-  const valid = errs.length === 0
-  return (
-    <FontAwesome name={valid ? 'check' : 'close'} />
-  )
-})
-
+const preparationPanelDataSelectorFactory = memoize((expeditionId) =>
+  createSelector([
+    constSelector,
+    expeditionDataSelector,
+    fleetsPropertiesSelectorFactory,
+  ], ({$missions: $expeditions={}}, expeditionsData, fleetsProps) => ({
+    $expedition: $expeditions[expeditionId],
+    expeditionData: expeditionsData[expeditionId],
+    fleetsProps,
+  }))
+)
 // Connect to empty just to make it pure
 const PreparationPanel = connect(
-  () => ({})
-)(function PreparationPanel({expeditionId}) {
+  (state, {expeditionId}) =>
+    preparationPanelDataSelectorFactory(expeditionId)(state)
+)(function PreparationPanel({expeditionId, $expedition, expeditionData, fleetsProps}) {
   return (
     <Col xs={12}>
       <Panel header={__('Preparation')} bsStyle='default' className='fleetPanel'>
         <div className='preparation-row'>
         {
-          range(1, 4).map((fleetId) =>
-            <OverlayTrigger key={fleetId} placement='top' overlay={
-              <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
-                <PreparationTooltip fleetId={fleetId} expeditionId={expeditionId} />
-              </Tooltip>
-            }>
-              <div className='preparation-cell'>
-                <div className='tooltipTrigger preparation-contents'>
-                  {__('fleet %s', fleetId + 1)}
-                  <div className='preparation-check'>
-                    <PreparationCheck  fleetId={fleetId} expeditionId={expeditionId} />
+          range(1, 4).map((fleetId) => {
+            const errs = expeditionErrors(fleetsProps[fleetId-1], $expedition, expeditionData)
+            return (
+              <OverlayTrigger key={fleetId} placement='top' overlay={
+                <Tooltip id={`expedition-fleet-${fleetId}-resources`}>
+                  <PreparationTooltip fleetId={fleetId} expeditionId={expeditionId} errs={errs} />
+                </Tooltip>
+              }>
+                <div className='preparation-cell'>
+                  <div className='tooltipTrigger preparation-contents'>
+                    {__('fleet %s', fleetId + 1)}
+                    <div className='preparation-check'>
+                      <FontAwesome name={errs.length === 0 ? 'check' : 'close'} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </OverlayTrigger>
-          )
+              </OverlayTrigger>
+            )
+          })
         }
         </div>
       </Panel>
@@ -608,6 +635,7 @@ export const reactClass = connect(
   (state) => ({
     state,
     $expeditions: state.const.$missions,
+    expeditionsData: expeditionDataSelector(state),
   }),
   null, null, {pure: false}
 )(class PoiPluginExpedition extends Component {
@@ -631,7 +659,9 @@ export const reactClass = connect(
     case '/kcsapi/api_req_mission/start': {
       const fleetId = postBody.api_deck_id - 1
       const expeditionId = postBody.api_mission_id
-      const errs = fleetExpeditionErrorsSelectorFactory(fleetId, expeditionId)(this.props.state)
+      const {$expeditions, expeditionsData, state} = this.props
+      const fleetProps = fleetPropertiesSelectorFactory(fleetId)(state)
+      const errs = expeditionErrors(fleetProps, $expeditions[expeditionId], expeditionsData[expeditionId])
       if (errs.length)
         window.toggleModal(__('Attention!'),
           <div>
@@ -671,11 +701,12 @@ export const reactClass = connect(
 export function reducer(state={}, action) {
   const {type} = action
   switch (type) {
-  case '@@poi-plugin-expedition@init':
+  case '@@poi-plugin-expedition@init': {
     const expeditionData = readJsonSync(join(__dirname, 'assets', 'expedition.json'))
     return {
       expeditions: keyBy(expeditionData, 'id'),
     }
+  }
   }
   return state
 }
