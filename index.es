@@ -633,7 +633,6 @@ const DescriptionPanel = connect(
 
 export const reactClass = connect(
   (state) => ({
-    state,
     $expeditions: state.const.$missions,
     expeditionsData: expeditionDataSelector(state),
   }),
@@ -659,8 +658,8 @@ export const reactClass = connect(
     case '/kcsapi/api_req_mission/start': {
       const fleetId = postBody.api_deck_id - 1
       const expeditionId = postBody.api_mission_id
-      const {$expeditions, expeditionsData, state} = this.props
-      const fleetProps = fleetPropertiesSelectorFactory(fleetId)(state)
+      const {$expeditions, expeditionsData} = this.props
+      const fleetProps = fleetPropertiesSelectorFactory(fleetId)(getStore())
       const errs = expeditionErrors(fleetProps, $expeditions[expeditionId], expeditionsData[expeditionId])
       if (errs.length)
         window.toggleModal(__('Attention!'),
