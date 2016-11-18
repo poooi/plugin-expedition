@@ -7,6 +7,7 @@ import { map, keyBy, sum, join as joinString, range, forEach, flatten, groupBy, 
 import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
 import shallowCompare from 'react-addons-shallow-compare'
+import FontAwesome from 'react-fontawesome'
 
 import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
 import { store } from 'views/createStore'
@@ -18,7 +19,7 @@ import {
   extensionSelectorFactory,
 } from 'views/utils/selectors'
 
-const { FontAwesome, i18n, ROOT } = window
+const { i18n, ROOT } = window
 const __ = i18n["poi-plugin-expedition"].__.bind(i18n["poi-plugin-expedition"])
 const REDUCER_EXTENSION_KEY = 'poi-plugin-expedition'
 

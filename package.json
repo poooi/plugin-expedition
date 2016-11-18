@@ -1,6 +1,6 @@
 {
   "name": "poi-plugin-expedition",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "show expedition info",
   "main": "index.cjsx",
   "scripts": {
