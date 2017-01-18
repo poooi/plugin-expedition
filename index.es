@@ -35,7 +35,7 @@ const itemNames = [
   __('Furniture Box Large'),
 ]
 
-const constraintError = {
+const constraintErrorType = {
   inexist: 'Expedition not found',
   flagship_unhealthy: 'Flagship heavily damaged',
   resupply: 'Fleet not resupplied',
@@ -52,10 +52,13 @@ function ErrorList({ errs, liClassName, ulClassName }) {
   return (
     <ul className={ulClassName}>
       {
-      errs.map((err) => {
-        const rawText = __(constraintError[err] || constraintError['*'])
+      errs.map(({ type, detail }) => {
+        let rawText = __(constraintErrorType[type] || constraintErrorType['*'])
+        if (typeof detail != 'undefined') {
+          rawText += `${detail}`
+        }
         return (
-          <li key={err} className={liClassName}>
+          <li key={type} className={liClassName}>
             {rawText}
           </li>
         )
@@ -339,13 +342,14 @@ const SupportExpeditionData = {
 
 // Returns [ <error_code> ]
 function expeditionErrors(fleetProperties, $expedition, expeditionData) {
-  const errorInexist = ['inexist']
+  const errorInexist = [{ type: 'inexist' }]
   const props = fleetProperties     // Make it shorter
+  console.log(props, expeditionData)
 
   if (!$expedition) {
     return errorInexist
   }
-  const expedition = expeditionData || $expedition.api_return_flag == 0 ? SupportExpeditionData : null
+  const expedition = expeditionData || ($expedition.api_return_flag == 0 ? SupportExpeditionData : null)
   // Has $expedition, but no expedition data, and not a support expedition
   if (!expedition) {
     return errorInexist
@@ -353,35 +357,37 @@ function expeditionErrors(fleetProperties, $expedition, expeditionData) {
 
   const errs = []
   if (!props.flagshipHealthy) {
-    errs.push('flagship_unhealthy')
+    errs.push({ type: 'flagship_unhealthy' })
   }
   if (!props.fullyResupplied) {
-    errs.push('resupply')
+    errs.push({ type: 'resupply' })
   }
   if (expedition.flagship_lv != 0 && props.flagshipLv < expedition.flagship_lv) {
-    errs.push('flagship_lv')
+    errs.push({ type: 'flagship_lv', detail: `${props.flagshipLv} < ${expedition.flagship_lv}` })
   }
   if (expedition.fleet_lv != 0 && props.totalLv < expedition.fleet_lv) {
-    errs.push('fleet_lv')
+    errs.push({ type: 'fleet_lv', detail: `${props.totalLv} < ${expedition.fleet_lv}` })
   }
   if (expedition.flagship_shiptype != 0 && props.flagshipType != expedition.flagship_shiptype) {
-    errs.push('flagship_shiptype')
+    errs.push({ type: 'flagship_shiptype' })
   }
   if (expedition.ship_count != 0 && props.shipCount < expedition.ship_count) {
-    errs.push('ship_count')
+    errs.push({ type: 'ship_count', detail: `${props.shipCount} < ${expedition.ship_count}` })
   }
   if (expedition.drum_ship_count != 0 && props.drumCarrierCount < expedition.drum_ship_count) {
-    errs.push('drum_ship_count')
+    errs.push({ type: 'drum_ship_count', detail: `${props.drumCarrierCount} < ${expedition.drum_ship_count}` })
   }
   if (expedition.drum_count != 0 && props.drumCount < expedition.drum_count) {
-    errs.push('drum_count')
+    errs.push({ type: 'drum_count', detail: `${props.drumCount} < ${expedition.drum_count}` })
   }
   if (expedition.required_shiptypes.length != 0) {
-    const valid = expedition.required_shiptypes.every(({ shiptype, count }) =>
-      props.shipsType.filter(t => shiptype.includes(t)).length >= count
-    )
+    const valid = expedition.required_shiptypes.every(({ shiptype, count }) => {
+      return props.shipsType.filter((t) => {
+        return shiptype.includes(t)
+      }).length >= count
+    })
     if (!valid) {
-      errs.push('required_shiptypes')
+      errs.push({ type: 'required_shiptypes' })
     }
   }
   return errs
@@ -483,6 +489,7 @@ const MapAreaPanel = connect(
                     {
                     range(1, 4).map((fleetId) => {
                       const errs = expeditionErrors(fleetsProperties[fleetId - 1], $expedition, expeditionsData[api_id])
+                      console.log(errs.length)
                       return (
                         <FleetExpeditionIndicator
                           valid={errs.length === 0}
