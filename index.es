@@ -215,7 +215,7 @@ function landingCraftFactor(equipData) {
 // calculates the bonus brought by ship herself
 const shipFactor = constIds =>
   constIds.reduce((factor, id) =>
-    factor + shipId[id] || 0
+    factor + (shipId[id] || 0)
   , 0)
 
 const bonusItem = [193]
@@ -344,7 +344,6 @@ const SupportExpeditionData = {
 function expeditionErrors(fleetProperties, $expedition, expeditionData) {
   const errorInexist = [{ type: 'inexist' }]
   const props = fleetProperties     // Make it shorter
-  console.log(props, expeditionData)
 
   if (!$expedition) {
     return errorInexist
@@ -489,7 +488,6 @@ const MapAreaPanel = connect(
                     {
                     range(1, 4).map((fleetId) => {
                       const errs = expeditionErrors(fleetsProperties[fleetId - 1], $expedition, expeditionsData[api_id])
-                      console.log(errs.length)
                       return (
                         <FleetExpeditionIndicator
                           valid={errs.length === 0}
