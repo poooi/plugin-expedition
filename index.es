@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { readJsonSync } from 'fs-extra'
 import { Grid, Row, Col, Tabs, Tab, ListGroupItem, Panel, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { map, keyBy, sum, join as joinString, range, forEach, flatten, groupBy, get } from 'lodash'
+import { map, keyBy, sum, join as joinString, range, forEach, flatten, groupBy, get, round } from 'lodash'
 import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -549,7 +549,7 @@ const PreparationTooltip = connect(
     tooltip =
       (<div>
         <div>{__('theoretical expedition revenue (per hour)')}</div>
-        <div>{__('Daihatsu Landing Craft Bonus: ')}{`+${sum([base, star, bonus])}%`}</div>
+        <div>{__('Daihatsu Landing Craft Bonus: ')}{`+${round(sum([base, star, bonus]), 1)}%`}</div>
         <table width="100%" className="expedition-materialTable">
           <tbody>
             <tr>
