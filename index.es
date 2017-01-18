@@ -200,7 +200,6 @@ function landingCraftFactor(equipData) {
   if (!Array.isArray(equipData) || !equipData[0]) {
     return
   }
-  console.log(equipData)
   const equip = equipData[0]
   const factor = landingCraftsId[equip.api_slotitem_id]
   if (factor == null) {
@@ -209,10 +208,33 @@ function landingCraftFactor(equipData) {
   return [factor, equip.api_level || 0]
 }
 
+// calculates the bonus brought by ship herself
 const shipFactor = constIds =>
   constIds.reduce((factor, id) =>
     factor + shipId[id] || 0
   , 0)
+
+const bonusItem = [193]
+
+// calculates extra bonus from toku daihatsu
+const bonusFactor = (shipsEquipData) => {
+  const bonusCount = shipsEquipData.reduce((count, equipsData) => {
+    return count + equipsData.reduce((_count, equip = []) =>
+      _count + (bonusItem.includes((equip[1] || {}).api_id) ? 1 : 0)
+    , 0)
+  }, 0)
+
+  switch (true) {
+  case (bonusCount == 3):
+    return 5
+  case (bonusCount >= 4):
+    return 5.4
+  case (bonusCount < 0):
+    return 0
+  default:
+    return bonusCount * 2
+  }
+}
 
 const fleetConstShipIdSelectorFactory = memoize(fleetId =>
   createSelector(
@@ -242,7 +264,7 @@ const fleetLandingCraftFactorSelectorFactory = memoize(fleetId =>
       const baseFactor = Math.min(lcFactors[0] + shipFactor(constIds) || 0, 20)
       const avgStars = (lcFactors[1] / landingCrafts.length) || 0
       const starFactor = 1 * avgStars * baseFactor
-      return baseFactor + starFactor
+      return baseFactor + starFactor + bonusFactor(shipsEquipData)
     }
   )
 )
