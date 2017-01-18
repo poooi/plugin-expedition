@@ -265,7 +265,7 @@ const fleetLandingCraftFactorSelectorFactory = memoize(fleetId =>
         equipsData.map(landingCraftFactor).filter(Boolean)
       ))
       const lcFactors = arraySum(landingCrafts)
-      const baseFactor = Math.min(lcFactors[0] + shipFactor(constIds) || 0, 20)
+      const baseFactor = Math.min((lcFactors[0] || 0) + shipFactor(constIds), 20)
       const avgStars = (lcFactors[1] / landingCrafts.length) || 0
       const starFactor = 1 * avgStars * baseFactor
       const bonus = bonusFactor(shipsEquipData)
@@ -541,7 +541,7 @@ const PreparationTooltip = connect(
     return preparationTooltipDataSelectorFactory(fleetId, expeditionId)(state)
   }
 )(({ errs, rewards, time, fleetId }) => {
-  const { normalRewards, greatRewards, lcFactor } = rewards
+  const { normalRewards, greatRewards, lcFactor = {} } = rewards
   const { base, star, bonus } = lcFactor
   const valid = errs.length == 0
   let tooltip
@@ -557,7 +557,7 @@ const PreparationTooltip = connect(
     tooltip =
       (<div>
         <div>{__('theoretical expedition revenue (per hour)')}</div>
-        <div>{__('Daihatsu Landing Craft Bonus: ')}{`+${round(sum([base, star, bonus]), 1)}%`}</div>
+        {base && <div>{__('Daihatsu Landing Craft Bonus: ')}{`+${round(sum([base, star, bonus]), 1)}%`}</div>}
         <table width="100%" className="expedition-materialTable">
           <tbody>
             <tr>
