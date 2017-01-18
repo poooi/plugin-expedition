@@ -13,6 +13,7 @@ import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
 import { store } from 'views/createStore'
 import {
   constSelector,
+  shipsSelector,
   fleetShipsIdSelectorFactory,
   fleetShipsDataSelectorFactory,
   fleetShipsEquipDataSelectorFactory,
@@ -189,12 +190,17 @@ const landingCraftsId = {
   193: 5,       // 特大発動艇
 }
 
+const shipId = {
+  487: 5,
+}
+
 // Return [ baseFactorPercentage, starLevel ]
 // Return undefined for invalid or empty equips
 function landingCraftFactor(equipData) {
-  if (!Array.isArray(equipData) || equipData[0]) {
+  if (!Array.isArray(equipData) || !equipData[0]) {
     return
   }
+  console.log(equipData)
   const equip = equipData[0]
   const factor = landingCraftsId[equip.api_slotitem_id]
   if (factor == null) {
@@ -203,16 +209,37 @@ function landingCraftFactor(equipData) {
   return [factor, equip.api_level || 0]
 }
 
+const shipFactor = constIds =>
+  constIds.reduce((factor, id) =>
+    factor + shipId[id] || 0
+  , 0)
+
+const fleetConstShipIdSelectorFactory = memoize(fleetId =>
+  createSelector(
+    [
+      fleetShipsIdSelectorFactory(fleetId),
+      shipsSelector,
+    ],
+    (ids = [], ships) => {
+      return ids.map(id => (ships[id] || {}).api_ship_id || -1)
+    }
+  )
+)
+
 // Returns the bonus percentage brought by landing crafts
 // e.g. 20 means 20% bonus, or x1.2 factor
 const fleetLandingCraftFactorSelectorFactory = memoize(fleetId =>
-  createSelector(fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData = []) => {
+  createSelector(
+    [
+      fleetShipsEquipDataSelectorFactory(fleetId),
+      fleetConstShipIdSelectorFactory(fleetId),
+    ],
+    (shipsEquipData = [], constIds) => {
       const landingCrafts = flatten(shipsEquipData.map(equipsData =>
         equipsData.map(landingCraftFactor).filter(Boolean)
       ))
       const lcFactors = arraySum(landingCrafts)
-      const baseFactor = Math.min(lcFactors[0] || 0, 20)
+      const baseFactor = Math.min(lcFactors[0] + shipFactor(constIds) || 0, 20)
       const avgStars = (lcFactors[1] / landingCrafts.length) || 0
       const starFactor = 1 * avgStars * baseFactor
       return baseFactor + starFactor
@@ -346,6 +373,7 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
     if (!$expedition) {
       return [[0, 0, 0, 0], [0, 0, 0, 0]]
     }
+    console.log(lcFactor)
     const expedition = expeditions[expeditionId] || SupportExpeditionData
     const baseRewards =
       ['reward_fuel', 'reward_bullet', 'reward_steel', 'reward_alum']
@@ -593,12 +621,13 @@ const descriptionPanelRenderSelectorFactory = memoize(expeditionId =>
     }
     forEach(resourcesKeyText, (text, key) => {
       if (expedition[key] != 0) {
+        const perHour = Math.round((expedition[key] * 60) / $expedition.api_time)
         information.push(
           <li key={key}>
             <OverlayTrigger
               placement="right" overlay={
                 <Tooltip id={`${key}-per-hour`}>
-                  {__(text)} {Math.round(expedition[key] * 60 / $expedition.api_time)} / {__('hour(s)')}
+                  {__(text)} {perHour} / {__('hour(s)')}
                 </Tooltip>
               }
             >
