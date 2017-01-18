@@ -264,7 +264,12 @@ const fleetLandingCraftFactorSelectorFactory = memoize(fleetId =>
       const baseFactor = Math.min(lcFactors[0] + shipFactor(constIds) || 0, 20)
       const avgStars = (lcFactors[1] / landingCrafts.length) || 0
       const starFactor = 1 * avgStars * baseFactor
-      return baseFactor + starFactor + bonusFactor(shipsEquipData)
+      const bonus = bonusFactor(shipsEquipData)
+      return {
+        base: baseFactor,
+        star: starFactor,
+        bonus,
+      }
     }
   )
 )
@@ -395,12 +400,13 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
     if (!$expedition) {
       return [[0, 0, 0, 0], [0, 0, 0, 0]]
     }
-    console.log(lcFactor)
     const expedition = expeditions[expeditionId] || SupportExpeditionData
     const baseRewards =
       ['reward_fuel', 'reward_bullet', 'reward_steel', 'reward_alum']
       .map(key => expedition[key])
-    const lcRewards = arrayMultiply(baseRewards, 1 + (lcFactor / 100))
+    const { base, star, bonus } = lcFactor
+    const totalFactor = sum([base, star, bonus])
+    const lcRewards = arrayMultiply(baseRewards, 1 + (totalFactor / 100))
     const resupply = [
       -maxResupply[0] * $expedition.api_use_fuel,
       -maxResupply[1] * $expedition.api_use_bull,
@@ -408,7 +414,11 @@ const fleetExpeditionRewardsSelectorFactory = memoize((fleetId, expeditionId) =>
       0]
     const normalRewards = arrayAdd(lcRewards, resupply).map(Math.floor)
     const greatRewards = arrayAdd(arrayMultiply(lcRewards, 1.5), resupply).map(Math.floor)
-    return [normalRewards, greatRewards]
+    return {
+      normalRewards,
+      greatRewards,
+      lcFactor,
+    }
   })
 )
 
@@ -517,11 +527,14 @@ const preparationTooltipDataSelectorFactory = memoize((fleetId, expeditionId) =>
     rewards,
   }))
 )
+
 const PreparationTooltip = connect(
   (state, { fleetId, expeditionId }) => {
     return preparationTooltipDataSelectorFactory(fleetId, expeditionId)(state)
   }
-)(({ errs, rewards: [normalRewards, greatRewards], time, fleetId }) => {
+)(({ errs, rewards, time, fleetId }) => {
+  const { normalRewards, greatRewards, lcFactor } = rewards
+  const { base, star, bonus } = lcFactor
   const valid = errs.length == 0
   let tooltip
   if (valid) {
@@ -536,6 +549,7 @@ const PreparationTooltip = connect(
     tooltip =
       (<div>
         <div>{__('theoretical expedition revenue (per hour)')}</div>
+        <div>{__('Daihatsu Landing Craft Bonus: ')}{`+${sum([base, star, bonus])}%`}</div>
         <table width="100%" className="expedition-materialTable">
           <tbody>
             <tr>
