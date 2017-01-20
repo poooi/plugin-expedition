@@ -21,14 +21,15 @@
   "Flagship Lv.": "必要旗艦 Lv.",
   "Total Lv.": "艦隊合計 Lv.",
   "Flagship Type": "旗艦必要艦種",
-  "Number of ships": "必要編成隻数",
+  "Number of ships": "必要編成数",
   "Minimum of %s ships carrying drum": "ドラム缶(輸送用)を %s 隻以上",
   "number of drum carriers": "ドラム缶(輸送用)合計",
   " or ": " あるいは ",
   "Great Success Requirement(s)": "大成功の条件",
   "hour(s)": "時",
-  "Fleet %s hasn't reach requirements of %s. Please call back your fleet.": "第 %s 舰队远征 %s 不满足成功条件，请及时召回！",
+  "Fleet %s hasn't reach requirements of %s. Please call back your fleet.": "第 %s 艦隊の %s 遠征は、成功条件を満たしていない",
   "Attention!": "注意！",
   "Preparation": "艦隊の準備",
-  "theoretical expedition revenue (per hour)": "远征收益理论值 (时均)"
+  "theoretical expedition revenue (per hour)": "遠征資源量理論値（時間平均）",
+  "Daihatsu Landing Craft Bonus: ": "大発動艇のボーナス："
 }
