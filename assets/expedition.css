@@ -123,3 +123,15 @@
 .preparation-tooltip-li {
   text-align: left;
 }
+.preparation-tooltip-table {
+}
+.preparation-tooltip-tr {
+}
+.preparation-tooltip-td-text {
+  text-align: left;
+}
+.preparation-tooltip-td-number {
+  padding-left: 5px;
+  text-align: right;
+}
+
