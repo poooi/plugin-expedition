@@ -52,26 +52,21 @@ function ErrorList({ errs, liClassName, ulClassName, tableClassName, trClassName
   return (
     <table className={tableClassName}>
       {
-      errs.map(({ type, detail, detCur, detReq }) => {
-        let rawReason = __(constraintErrorType[type] || constraintErrorType['*'])
-        let rawCur = ''
-        let rawReq = ''
-        let tdWarnNumClassName = `${tdNumberClassName} text-info` // 'text-info' comes from css file from poi style
-        if (typeof detail != 'undefined') {
-          rawCur += `${detCur}`
-          rawReq += `${detReq}`
-          return (
-          	 <tr key={type} className={trClassName}>
-                <td className={tdTextClassName}>{rawReason}</td>
-                <td className={tdWarnNumClassName}>{rawCur}</td>
-                <td className={tdNumberClassName}>{rawReq}</td>
-             </tr>
-          )
-        }
+      errs.map(({ type, detail, current, requirement }) => {
+        const reason = __(constraintErrorType[type] || constraintErrorType['*'])
+        const tdWarnNumClassName = `${tdNumberClassName} text-info` // 'text-info' comes from css file from poi style
+
         return (
-          <tr key={type} className={trClassName}>
-             <td className={tdTextClassName}>{rawReason}</td>
-          </tr>
+          detail ?
+            <tr key={type} className={trClassName}>
+              <td className={tdTextClassName}>{reason}</td>
+              <td className={tdWarnNumClassName}>{current}</td>
+              <td className={tdNumberClassName}>{requirement}</td>
+            </tr>
+          :
+            <tr key={type} className={trClassName}>
+              <td className={tdTextClassName}>{reason}</td>
+            </tr>
         )
       })
     }
@@ -373,22 +368,22 @@ function expeditionErrors(fleetProperties, $expedition, expeditionData) {
     errs.push({ type: 'resupply' })
   }
   if (expedition.flagship_lv != 0 && props.flagshipLv < expedition.flagship_lv) {
-    errs.push({ type: 'flagship_lv', detail: true, detCur: `${props.flagshipLv}`, detReq: `${expedition.flagship_lv}` })
+    errs.push({ type: 'flagship_lv', detail: true, current: `${props.flagshipLv}`, requirement: `${expedition.flagship_lv}` })
   }
   if (expedition.fleet_lv != 0 && props.totalLv < expedition.fleet_lv) {
-    errs.push({ type: 'fleet_lv', detail: true, detCur: `${props.totalLv}`, detReq: `${expedition.fleet_lv}` })
+    errs.push({ type: 'fleet_lv', detail: true, current: `${props.totalLv}`, requirement: `${expedition.fleet_lv}` })
   }
   if (expedition.flagship_shiptype != 0 && props.flagshipType != expedition.flagship_shiptype) {
     errs.push({ type: 'flagship_shiptype' })
   }
   if (expedition.ship_count != 0 && props.shipCount < expedition.ship_count) {
-    errs.push({ type: 'ship_count', detail: true, detCur: `${props.shipCount}`, detReq: `${expedition.ship_count}` })
+    errs.push({ type: 'ship_count', detail: true, current: `${props.shipCount}`, requirement: `${expedition.ship_count}` })
   }
   if (expedition.drum_ship_count != 0 && props.drumCarrierCount < expedition.drum_ship_count) {
-    errs.push({ type: 'drum_ship_count', detail: true, detCur: `${props.drumCarrierCount}`, detReq: `${expedition.drum_ship_count}` })
+    errs.push({ type: 'drum_ship_count', detail: true, current: `${props.drumCarrierCount}`, requirement: `${expedition.drum_ship_count}` })
   }
   if (expedition.drum_count != 0 && props.drumCount < expedition.drum_count) {
-    errs.push({ type: 'drum_count', detail: true, detCur: `${props.drumCount}`, detReq: `${expedition.drum_count}` })
+    errs.push({ type: 'drum_count', detail: true, current: `${props.drumCount}`, requirement: `${expedition.drum_count}` })
   }
   if (expedition.required_shiptypes.length != 0) {
     const valid = expedition.required_shiptypes.every(({ shiptype, count }) => {
