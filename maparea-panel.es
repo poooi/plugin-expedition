@@ -68,7 +68,7 @@ const MapAreaPanel = connect(createSelector([
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 10,
                     }}
                     >
-                      {api_id} {$expedition.api_name}
+                      {$expedition.api_disp_no} {$expedition.api_name}
                     </span>
                     <span style={{
                       flex: 'none', display: 'flex', alignItems: 'center', width: 30, justifyContent: 'space-between',
@@ -89,16 +89,20 @@ const MapAreaPanel = connect(createSelector([
                   </ListGroupItem>
                 )
               })
+              const mid = Math.max(
+                Math.ceil(expeditionDisplays.length / 2),
+                4
+              )
               return (
                 <Tab eventKey={$maparea.api_id} key={$maparea.api_id} title={$maparea.api_name}>
                   <table width="100%" className="expItems">
                     <tbody>
                       <tr>
                         <td>
-                          {expeditionDisplays.slice(0, 4)}
+                          {expeditionDisplays.slice(0, mid)}
                         </td>
                         <td>
-                          {expeditionDisplays.slice(4, 8)}
+                          {expeditionDisplays.slice(mid, expeditionDisplays.length)}
                         </td>
                       </tr>
                     </tbody>

@@ -25,27 +25,29 @@ const ErrorList = ({
   tdNumberClassName,
 }) => (
   <table className={tableClassName}>
-    {
-      errs.map(({
-        type, detail, current, requirement,
-      }) => {
-        const reason = __(constraintErrorType[type] || constraintErrorType['*'])
-        const tdWarnNumClassName = `${tdNumberClassName} text-info` // 'text-info' comes from css file from poi style
+    <tbody>
+      {
+        errs.map(({
+          type, detail, current, requirement,
+        }) => {
+          const reason = __(constraintErrorType[type] || constraintErrorType['*'])
+          const tdWarnNumClassName = `${tdNumberClassName} text-info` // 'text-info' comes from css file from poi style
 
-        return (
-          detail ?
-            <tr key={type} className={trClassName}>
-              <td className={tdTextClassName}>{reason}</td>
-              <td className={tdWarnNumClassName}>{current}</td>
-              <td className={tdNumberClassName}>{requirement}</td>
-            </tr>
-            :
-            <tr key={type} className={trClassName}>
-              <td className={tdTextClassName}>{reason}</td>
-            </tr>
-        )
-      })
-    }
+          return (
+            detail ?
+              <tr key={type} className={trClassName}>
+                <td className={tdTextClassName}>{reason}</td>
+                <td className={tdWarnNumClassName}>{current}</td>
+                <td className={tdNumberClassName}>{requirement}</td>
+              </tr>
+              :
+              <tr key={type} className={trClassName}>
+                <td className={tdTextClassName}>{reason}</td>
+              </tr>
+          )
+        })
+      }
+    </tbody>
   </table>
 )
 
