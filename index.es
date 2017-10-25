@@ -52,7 +52,7 @@ const PreparationTooltip = connect(
 )(({
   errs, rewards, time, fleetId,
 }) => {
-  const { normalRewards, greatRewards, lcFactor = {} } = rewards
+  const { normalRewards = {}, greatRewards = {}, lcFactor = {} } = rewards
   const { base, star, bonus } = lcFactor
   const valid = errs.length === 0
   let tooltip
