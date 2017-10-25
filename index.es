@@ -112,9 +112,10 @@ const preparationPanelDataSelectorFactory = memoize(expeditionId =>
   })))
 // Connect to empty just to make it pure
 const PreparationPanel = connect((state, { expeditionId }) =>
-  preparationPanelDataSelectorFactory(expeditionId)(state))(({
+  preparationPanelDataSelectorFactory(expeditionId)(state)
+)(({
   expeditionId, $expedition, expeditionData, fleetsProps,
-}) => (
+}) => expeditionData ? (
   <Col xs={12}>
     <Panel header={__('Preparation')} bsStyle="default" className="fleetPanel">
       <div className="preparation-row">
@@ -143,6 +144,14 @@ const PreparationPanel = connect((state, { expeditionId }) =>
             )
           })
         }
+      </div>
+    </Panel>
+  </Col>
+) : (
+  <Col xs={12}>
+    <Panel header={__('Preparation')} bsStyle="default" className="fleetPanel">
+      <div className="preparation-row">
+        {__('Infomation for this expedition is not ready.')}
       </div>
     </Panel>
   </Col>
@@ -178,7 +187,7 @@ const descriptionPanelRenderSelectorFactory = memoize(expeditionId =>
         reward_alum: 'Bauxite',
       }
       forEach(resourcesKeyText, (text, key) => {
-        if (expedition[key] !== 0) {
+        if (expedition[key] > 0) {
           const perHour = Math.round((expedition[key] * 60) / $expedition.api_time)
           information.push(
             <li key={key}>
@@ -197,7 +206,7 @@ const descriptionPanelRenderSelectorFactory = memoize(expeditionId =>
             </li>)
         }
       })
-      if (expedition.reward_items && expedition.reward_items.length !== 0) {
+      if (expedition.reward_items && expedition.reward_items.length > 0) {
         expedition.reward_items.forEach((reward_item) => {
           information.push(
             <li key={`reward_items_${reward_item.itemtype}`}>
@@ -208,22 +217,22 @@ const descriptionPanelRenderSelectorFactory = memoize(expeditionId =>
 
       // Right panel: constraints
       const constraints = []
-      if (expedition.flagship_lv !== 0) {
+      if (expedition.flagship_lv > 0) {
         constraints.push(<li key="flagship_lv">{__('Flagship Lv.')} {expedition.flagship_lv}</li>)
       }
-      if (expedition.fleet_lv !== 0) {
+      if (expedition.fleet_lv > 0) {
         constraints.push(<li key="fleet_lv">{__('Total Lv.')} {expedition.fleet_lv}</li>)
       }
-      if (expedition.flagship_shiptype !== 0) {
+      if (expedition.flagship_shiptype > 0) {
         constraints.push(<li key="flagship_shiptype">{__('Flagship Type')} {get($shipTypes, [expedition.flagship_shiptype, 'api_name'], '???')}</li>)
       }
-      if (expedition.ship_count !== 0) {
+      if (expedition.ship_count > 0) {
         constraints.push(<li key="ship_count">{__('Number of ships')} {expedition.ship_count} </li>)
       }
-      if (expedition.drum_ship_count !== 0) {
+      if (expedition.drum_ship_count > 0) {
         constraints.push(<li key="drum_ship_count">{__('Minimum of %s ships carrying drum', expedition.drum_ship_count)}</li>)
       }
-      if (expedition.drum_count !== 0) {
+      if (expedition.drum_count > 0) {
         constraints.push(<li key="drum_count">{__('number of drum carriers')} {expedition.drum_count}</li>)
       }
       if (expedition.required_shiptypes) {

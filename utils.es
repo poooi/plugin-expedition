@@ -21,16 +21,16 @@ export const SupportExpeditionData = {
 
 // Returns [ <error_code> ]
 export function expeditionErrors(fleetProperties, $expedition, expeditionData) {
-  const errorInexist = [{ type: 'inexist' }]
+  // const errorInexist = [{ type: 'inexist' }]
   const props = fleetProperties // Make it shorter
 
   if (!$expedition) {
-    return errorInexist
+    return [] // do not give error
   }
   const expedition = expeditionData || ($expedition.api_return_flag === 0 ? SupportExpeditionData : null)
   // Has $expedition, but no expedition data, and not a support expedition
   if (!expedition) {
-    return errorInexist
+    return [] // do not give error
   }
 
   const errs = []
