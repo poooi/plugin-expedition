@@ -1,11 +1,10 @@
 import memoize from 'fast-memoize'
 import { createSelector } from 'reselect'
-import { sum, flatten } from 'lodash'
+import _, { sum, flatten, get } from 'lodash'
 
 import { arraySum, arrayAdd, arrayMultiply } from 'views/utils/tools'
 import {
   constSelector,
-  shipsSelector,
   fleetShipsIdSelectorFactory,
   fleetShipsDataSelectorFactory,
   fleetShipsEquipDataSelectorFactory,
@@ -14,8 +13,7 @@ import {
 
 const REDUCER_EXTENSION_KEY = 'poi-plugin-expedition'
 
-const isDrum = equipData =>
-  equipData && equipData[1] && equipData[1].api_id === 75
+const isDrum = equipData => get(equipData, [1, 'api_id'], -1) === 75
 
 const shipNotHeavilyDamaged = ship => ship.api_nowhp * 4 >= ship.api_maxhp
 
@@ -29,6 +27,7 @@ const landingCraftsId = {
   193: 5, // 特大発動艇
 }
 
+// Kinu Kai 2
 const shipId = {
   487: 5,
 }
@@ -57,13 +56,12 @@ const shipFactor = constIds =>
 
 const bonusItem = [193]
 
-// calculates extra bonus from toku daihatsu
+// calculates extra bonus from toku daihatsu, in percentage
 const bonusFactor = (shipsEquipData) => {
-  const bonusCount = shipsEquipData.reduce((count, equipsData) => count + equipsData.reduce(
-    (_count, equip = []) =>
-      _count + (bonusItem.includes((equip[1] || {}).api_id) ? 1 : 0)
-    , 0
-  ), 0)
+  const bonusCount = _(shipsEquipData)
+    .flatten()
+    .filter(equip => bonusItem.includes(get(equip, [1, 'api_id'], 0)))
+    .size()
 
   switch (true) {
     case (bonusCount === 3):
@@ -87,103 +85,74 @@ const fleetShipCountSelectorFactory = memoize(fleetId =>
 const fleetFlagshipLvSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    shipsData =>
-      (shipsData == null || shipsData[0] == null || !shipsData[0].length
-        ? 0
-        : shipsData[0][0].api_lv)
+    shipsData => get(shipsData, [0, 0, 'api_lv'], 0)
   ))
 
 const fleetTotalLvSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    shipsData =>
-      (shipsData == null ? 0 : sum(shipsData.map(shipData =>
-        (shipData == null || !shipData[0] ? 0 : shipData[0].api_lv))))
+    shipsData => _(shipsData).map(ship => get(ship, [0, 'api_lv'], 0)).sum()
   ))
 
 const fleetShipsTypeSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    shipsData =>
-      (shipsData == null ? [] : shipsData.map(shipData =>
-        (shipData == null || !shipData[1] ? undefined : shipData[1].api_stype)))
+    shipsData => _(shipsData).map(ship => get(ship, [1, 'api_stype'], 0)).value()
   ))
 
 const fleetFlagshipTypeSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsTypeSelectorFactory(fleetId),
-    shipsType =>
-      (shipsType == null ? undefined : shipsType[0])
+    shipsType => shipsType[0] || 0
   ))
 
 // Returns the total number of drums equipped in the fleet
 const fleetDrumCountSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData = []) =>
-      sum(shipsEquipData.map(equipsData =>
-        equipsData.filter(isDrum).length))
+    shipsEquipData => _(shipsEquipData).flatten().filter(isDrum).size()
   ))
 
 // Returns the total number of ships with a drum equipped in the fleet
 const fleetDrumCarrierCountSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsEquipDataSelectorFactory(fleetId),
-    (shipsEquipData = []) =>
-      shipsEquipData.filter(equipsData =>
-        equipsData.find(isDrum)).length
+    shipsEquipData => _(shipsEquipData).filter(equips => _(equips).some(isDrum)).size()
   ))
 
 // Returns false if the flagship is heavily damaged
 const fleetFlagshipHealthySelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    shipsData =>
-      (shipsData == null || shipsData[0] == null || !shipsData[0].length
-        ? true
-        : shipNotHeavilyDamaged(shipsData[0][0]))
+    shipsData => shipNotHeavilyDamaged(get(shipsData, [0, 0], {}))
   ))
 
-function shipFullyResupplied(shipData = []) {
-  const [ship, $ship] = shipData
-  return (!ship || !$ship)
-    ? true
-    : ship.api_fuel >= $ship.api_fuel_max && ship.api_bull >= $ship.api_bull_max
-}
+const shipFullyResupplied = ([ship, $ship] = []) => (!ship || !$ship)
+  ? true
+  : ship.api_fuel >= $ship.api_fuel_max && ship.api_bull >= $ship.api_bull_max
 
 // Returns false if any ship is not fully resupplied
 const fleetFullyResuppliedSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    shipsData =>
-      (shipsData == null
-        ? true
-        : shipsData.every(shipFullyResupplied))
+    shipsData => _(shipsData).every(shipFullyResupplied)
   ))
 
-function shipMaxResupply(shipData = []) {
-  const $ship = shipData[1]
-  return (!$ship) ? [0, 0] : [$ship.api_fuel_max, $ship.api_bull_max]
-}
+const getShipMaxResupply = ([, $ship] = []) =>
+  !$ship ? [0, 0] : [$ship.api_fuel_max, $ship.api_bull_max]
 
 // Returns [fuel, bull] consumed to fully resupply every ship from empty
 const fleetMaxResupplySelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
-    (shipsData) => {
-      const resupplies = shipsData == null ? []
-        : shipsData.map(shipMaxResupply)
-      return arraySum(resupplies)
-    }
+    shipsData => arraySum(_(shipsData).map(getShipMaxResupply).value())
   ))
 
 const fleetConstShipIdSelectorFactory = memoize(fleetId =>
   createSelector(
     [
-      fleetShipsIdSelectorFactory(fleetId),
-      shipsSelector,
-    ],
-    (ids = [], ships) => ids.map(id => (ships[id] || {}).api_ship_id || -1)
+      fleetShipsDataSelectorFactory(fleetId),
+    ], ships => _(ships).map(([ship] = []) => get(ship, 'api_id', 0)).value()
   ))
 
 // Returns the bonus percentage brought by landing crafts
