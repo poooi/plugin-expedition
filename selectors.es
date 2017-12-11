@@ -20,7 +20,7 @@ const shipNotHeavilyDamaged = ship => ship.api_nowhp * 4 >= ship.api_maxhp
 // for toku daihatsu 特大発動艇, the calculation is seperated into 2 parts
 // the former is to see it as normal daihatsu (5%)
 // the latter is to calculate extra bonus introduced by itself
-const landingCraftsId = {
+const bonusByItem = {
   68: 5, // 大発動艇
   166: 2, // 大発動艇(八九式中戦車&陸戦隊)
   167: 1, // 特二式内火艇
@@ -28,29 +28,15 @@ const landingCraftsId = {
 }
 
 // Kinu Kai 2
-const shipId = {
+const bonusByShip = {
   487: 5,
-}
-
-// Return [ baseFactorPercentage, starLevel ]
-// Return undefined for invalid or empty equips
-const landingCraftFactor = (equipData) => {
-  if (!Array.isArray(equipData) || !equipData[0]) {
-    return undefined
-  }
-  const equip = equipData[0]
-  const factor = landingCraftsId[equip.api_slotitem_id]
-  if (factor == null) {
-    return [0, 0]
-  }
-  return [factor, equip.api_level || 0]
 }
 
 // calculates the bonus brought by ship herself
 const shipFactor = constIds =>
   constIds.reduce(
     (factor, id) =>
-      factor + (shipId[id] || 0)
+      factor + (bonusByShip[id] || 0)
     , 0
   )
 
@@ -163,13 +149,20 @@ const fleetLandingCraftFactorSelectorFactory = memoize(fleetId =>
       fleetShipsEquipDataSelectorFactory(fleetId),
       fleetConstShipIdSelectorFactory(fleetId),
     ],
-    (shipsEquipData = [], constIds) => {
-      const landingCrafts = flatten(shipsEquipData.map(equipsData =>
-        equipsData.map(landingCraftFactor).filter(Boolean)))
-      const lcFactors = arraySum(landingCrafts)
-      const baseFactor = Math.min((lcFactors[0] || 0) + shipFactor(constIds), 20)
-      const avgStars = (lcFactors[1] / landingCrafts.length) || 0
-      const starFactor = 1 * avgStars * baseFactor
+    (shipsEquipData = [], shipIds) => {
+      const data = _(shipsEquipData)
+        .flatten()
+        .filter(equip => bonusByItem[get(equip, [1, 'api_id'])] || 0)
+
+      const itemBonus = data
+        .sumBy(equip => bonusByItem[get(equip, [1, 'api_id'])] || 0)
+
+      const levels = data
+        .sumBy(equip => get(equip, [0, 'api_level'], 0))
+
+      const baseFactor = Math.min(itemBonus + shipFactor(shipIds), 20)
+      const avgStars = levels === 0 ? 0 : levels / data.size()
+      const starFactor = (avgStars / 100) * baseFactor
       const bonus = bonusFactor(shipsEquipData)
       return {
         base: baseFactor,
