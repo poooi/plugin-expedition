@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { readJsonSync } from 'fs-extra'
-import { Grid, Row, Col, Panel, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Grid, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { keyBy, sum, join as joinString, range, forEach, get, round } from 'lodash'
 import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
@@ -15,6 +15,7 @@ import { MaterialIcon } from 'views/components/etc/icon'
 
 import ErrorList from './error-list'
 import MapAreaPanel from './maparea-panel'
+import Panel from './compat-panel'
 
 import {
   fleetsPropertiesSelectorFactory,
