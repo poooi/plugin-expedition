@@ -1189,5 +1189,109 @@
             }
         ],
         "big_success": null
+    },
+    {
+        "id": 100,
+        "reward_fuel": 45,
+        "reward_bullet": 45,
+        "reward_steel": 0,
+        "reward_alum": 0,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 4,
+                "max_number": 1
+            }
+        ],
+        "flagship_lv": 5,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [1, 2],
+                "count": 3
+            }
+        ],
+        "big_success": null
+    },
+    {
+        "id": 101,
+        "reward_fuel": 70,
+        "reward_bullet": 40,
+        "reward_steel": 0,
+        "reward_alum": 10,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 3,
+                "max_number": 1
+            }
+        ],
+        "flagship_lv": 20,
+        "fleet_lv": 0,
+        "flagship_shiptype": 0,
+        "ship_count": 4,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [1, 2],
+                "count": 4
+            }
+        ],
+        "required_extra": [
+            {
+                "api_taisen": 180
+            }
+        ],
+        "big_success": null
+    },
+    {
+        "id": 102,
+        "reward_fuel": 120,
+        "reward_bullet": 0,
+        "reward_steel": 60,
+        "reward_alum": 60,
+        "reward_items": [
+            {
+                "itemtype": 1,
+                "max_number": 1
+            },
+            {
+                "itemtype": 3,
+                "max_number": 2
+            }
+        ],
+        "flagship_lv": 35,
+        "fleet_lv": 185,
+        "flagship_shiptype": 0,
+        "ship_count": 5,
+        "drum_ship_count": 0,
+        "drum_count": 0,
+        "required_shiptypes": [
+            {
+                "shiptype": [1, 2],
+                "count": 3
+            },
+            {
+                "shiptype": [3],
+                "count": 1
+            }
+        ],
+        "required_extra": [
+            {
+                "api_taisen": 280
+            }
+        ],
+        "big_success": null
     }
 ]
