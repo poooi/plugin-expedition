@@ -9,7 +9,7 @@ import { createSelector } from 'reselect'
 import memoize from 'fast-memoize'
 import FontAwesome from 'react-fontawesome'
 
-import { store } from 'views/createStore'
+import { store } from 'views/create-store'
 import { constSelector } from 'views/utils/selectors'
 import { MaterialIcon } from 'views/components/etc/icon'
 
