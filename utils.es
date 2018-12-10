@@ -74,5 +74,31 @@ export function expeditionErrors(fleetProperties, $expedition, expeditionData) {
       errs.push({ type: 'required_shiptypes' })
     }
   }
+  if (expedition.required_extra) {
+    if (expedition.required_extra.asw) {
+      const valid = props.totalAWS >= expedition.required_extra.asw
+      if (!valid) {
+        errs.push({ type: 'asw', detail: true, current: props.totalAWS, requirement: expedition.required_extra.asw })
+      }
+    }
+    if (expedition.required_extra.aa) {
+      const valid = props.totalAA >= expedition.required_extra.aa
+      if (!valid) {
+        errs.push({ type: 'aa', detail: true, current: props.totalAA, requirement: expedition.required_extra.aa })
+      }
+    }
+    if (expedition.required_extra.los) {
+      const valid = props.totalLOS >= expedition.required_extra.los
+      if (!valid) {
+        errs.push({ type: 'los', detail: true, current: props.totalLOS, requirement: expedition.required_extra.los })
+      }
+    }
+    if (expedition.required_extra.firepower) {
+      const valid = props.totalFirepower >= expedition.required_extra.firepower
+      if (!valid) {
+        errs.push({ type: 'firepower', detail: true, current: props.totalFirepower, requirement: expedition.required_extra.firepower })
+      }
+    }
+  }
   return errs
 }

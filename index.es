@@ -242,6 +242,11 @@ const descriptionPanelRenderSelectorFactory = memoize(expeditionId =>
           constraints.push(<li key={`required_shiptypes_${stype_name}`}>{i18n.resources.__(stype_name)} {required_shiptype.count}</li>)
         })
       }
+      if (expedition.required_extra) {
+        Object.entries(expedition.required_extra).forEach(([name, value]) => {
+          constraints.push(<li key={`required_extra_${name}`}>{__(name)} {value}</li>)
+        })
+      }
       if (expedition.big_success) {
         constraints.push(<li key="big_success">{__('Great Success Requirement(s)')}: {expedition.big_success}</li>)
       }

@@ -44,5 +44,9 @@
   "Unmet ship type requirements": "舰队船种不符",
   "Unknown errors": "其它未知错误",
   "Daihatsu Landing Craft Bonus: ": "大发动艇加成：",
-  "Infomation for this expedition is not ready.": "暂无该远征的相关情报"
+  "Infomation for this expedition is not ready.": "暂无该远征的相关情报",
+  "asw": "合计对潜",
+  "aa": "合计对空",
+  "los": "合计索敌",
+  "firepower": "合计火力"
 }

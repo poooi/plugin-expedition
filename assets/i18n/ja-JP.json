@@ -32,5 +32,9 @@
   "Preparation": "艦隊の準備",
   "theoretical expedition revenue (per hour)": "遠征資源量理論値（時間平均）",
   "Daihatsu Landing Craft Bonus: ": "大発動艇のボーナス：",
-  "Infomation for this expedition is not ready.": "この遠征の情報は準備ができていません。"
+  "Infomation for this expedition is not ready.": "この遠征の情報は準備ができていません。",
+  "asw": "合計対潜",
+  "aa": "合計対空",
+  "los": "合計索敵",
+  "firepower": "合計火力"
 }

@@ -14,6 +14,10 @@ const constraintErrorType = {
   drum_ship_count: 'Not enough drum carriers',
   drum_count: 'Not enough drums',
   required_shiptypes: 'Unmet ship type requirements',
+  asw: 'Not enough ASW',
+  aa: 'Not enough AA',
+  los: 'Not enough LOS',
+  firepower: 'Not enough firepower',
   '*': 'Unknown errors',
 }
 

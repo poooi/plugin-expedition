@@ -80,6 +80,41 @@ const fleetTotalLvSelectorFactory = memoize(fleetId =>
     shipsData => _(shipsData).map(ship => get(ship, [0, 'api_lv'], 0)).sum()
   ))
 
+
+const fleetTotalASWSelectorFactory = memoize(fleetId =>
+  createSelector([
+    fleetShipsDataSelectorFactory(fleetId),
+    fleetShipsEquipDataSelectorFactory(fleetId),
+  ],
+    (shipsData, shipsEquipData = []) => {
+      const aws = _(shipsData).map(ship => get(ship, [0, 'api_taisen', 0], 0)).sum()
+      const equipData = _(shipsEquipData)
+        .flatten()
+        .filter(equip => [10, 11, 41].includes(get(equip, [1, 'api_type', 2])))
+      const extra = equipData
+        .sumBy(equip => get(equip, [1, 'api_tais'], 0))
+      return aws - extra
+    }
+  ))
+
+const fleetTotalAASelectorFactory = memoize(fleetId =>
+  createSelector(
+    fleetShipsDataSelectorFactory(fleetId),
+    shipsData => _(shipsData).map(ship => get(ship, [0, 'api_taiku', 0], 0)).sum()
+  ))
+
+const fleetTotalLOSSelectorFactory = memoize(fleetId =>
+  createSelector(
+    fleetShipsDataSelectorFactory(fleetId),
+    shipsData => _(shipsData).map(ship => get(ship, [0, 'api_sakuteki', 0], 0)).sum()
+  ))
+
+const fleetTotalFirepowerSelectorFactory = memoize(fleetId =>
+  createSelector(
+    fleetShipsDataSelectorFactory(fleetId),
+    shipsData => _(shipsData).map(ship => get(ship, [0, 'api_karyoku', 0], 0)).sum()
+  ))
+
 const fleetShipsTypeSelectorFactory = memoize(fleetId =>
   createSelector(
     fleetShipsDataSelectorFactory(fleetId),
@@ -182,9 +217,14 @@ export const fleetPropertiesSelectorFactory = memoize(fleetId => createSelector(
   fleetDrumCarrierCountSelectorFactory(fleetId),
   fleetFlagshipHealthySelectorFactory(fleetId),
   fleetFullyResuppliedSelectorFactory(fleetId),
+  fleetTotalASWSelectorFactory(fleetId),
+  fleetTotalAASelectorFactory(fleetId),
+  fleetTotalLOSSelectorFactory(fleetId),
+  fleetTotalFirepowerSelectorFactory(fleetId),
 ], (
   shipCount, flagshipLv, totalLv, shipsType, flagshipType,
-  drumCount, drumCarrierCount, flagshipHealthy, fullyResupplied
+  drumCount, drumCarrierCount, flagshipHealthy, fullyResupplied,
+  totalAWS, totalAA, totalLOS, totalFirepower,
 ) => ({
   shipCount,
   flagshipLv,
@@ -195,6 +235,10 @@ export const fleetPropertiesSelectorFactory = memoize(fleetId => createSelector(
   drumCarrierCount,
   flagshipHealthy,
   fullyResupplied,
+  totalAWS,
+  totalAA,
+  totalLOS,
+  totalFirepower,
 })))
 
 
